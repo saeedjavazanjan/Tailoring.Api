@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "+2U5Fj+dSC5r+TSPL43C1eKC3g5MTbRUHb9uvzuNfAGkm04AYWVRwB8LHtM8VrfijF6Klp/nYW6rEmLZ5lk2AQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\WebVajhegan\\RiderProjects\\Tailoring\\Tailoring.Api\\Tailoring.Api.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\WebVajhegan\\.nuget\\packages\\microsoft.openapi\\1.4.3\\microsoft.openapi.1.4.3.nupkg.sha512",
+    "C:\\Users\\WebVajhegan\\.nuget\\packages\\minimalapis.extensions\\0.11.0\\minimalapis.extensions.0.11.0.nupkg.sha512",
+    "C:\\Users\\WebVajhegan\\.nuget\\packages\\minivalidation\\0.8.0\\minivalidation.0.8.0.nupkg.sha512"
+  ],
+  "logs": []
+}
