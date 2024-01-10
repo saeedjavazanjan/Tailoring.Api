@@ -5,6 +5,7 @@ namespace Tailoring;
 public record GameDto(
     int Id,
     string Title,
+    string Category,
     string PostType,
     string Author,
     int AuthorId,
@@ -19,6 +20,7 @@ public record GameDto(
 
 public record CreatePostDto(
     [Required] [StringLength(20)] string Title,
+    [Required] string Category,
    [Required] string PostType,
     [Required] string Author,
     [Required] int AuthorId,
@@ -33,6 +35,7 @@ public record CreatePostDto(
 
 public record UpdatePostDto(
     [Required] [StringLength(20)] string Title,
+    [Required] string Category,
     [Required] string PostType,
     [Required] string Author,
     [Required] int AuthorId,

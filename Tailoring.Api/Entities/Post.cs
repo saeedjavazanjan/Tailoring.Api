@@ -8,6 +8,9 @@ public class Post
 
     [Required]
     public required string Title { get; set; }
+    
+    [Required]
+    public required string Category { get; set; }
    
     [Required]
     public required string PostType { get; set; }

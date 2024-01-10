@@ -31,6 +31,7 @@ public static class PostEndpoints
 
             Post post=new (){
                 Title= postDto.Title,
+                Category = postDto.Category,
                 PostType= postDto.PostType,
                 Author= postDto.Author,
                 AuthorId= postDto.AuthorId,
@@ -57,6 +58,7 @@ public static class PostEndpoints
                     return Results.NotFound(); 
                 } 
                 existedPost.Title=updatePostDto.Title;
+                existedPost.Category = updatePostDto.Category;
                 existedPost.PostType=updatePostDto.PostType;
                 existedPost.Author=updatePostDto.Author;
                 existedPost.AuthorId=updatePostDto.AuthorId;

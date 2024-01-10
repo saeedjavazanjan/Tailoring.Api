@@ -6,6 +6,7 @@ public static class EntityExtensions
         return new GameDto(
             post.Id,
             post.Title,
+            post.Category,
             post.PostType,
             post.Author,
             post.AuthorId,
