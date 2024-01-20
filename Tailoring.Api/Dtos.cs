@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Tailoring;
 
-public record GameDto(
+public record PostDto(
     int Id,
     string Title,
     string Category,

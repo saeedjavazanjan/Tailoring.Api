@@ -46,6 +46,19 @@
           }
         }
       },
+      "EntityFrameworkCore.UseRowNumberForPaging/0.5.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "8.0.0",
+          "Microsoft.EntityFrameworkCore.SqlServer": "8.0.0"
+        },
+        "compile": {
+          "lib/net8.0/EntityFrameworkCore.UseRowNumberForPaging.dll": {}
+        },
+        "runtime": {
+          "lib/net8.0/EntityFrameworkCore.UseRowNumberForPaging.dll": {}
+        }
+      },
       "Humanizer.Core/2.14.1": {
         "type": "package",
         "compile": {
@@ -1551,6 +1564,22 @@
         "azureicon.png",
         "lib/netstandard2.0/Azure.Identity.dll",
         "lib/netstandard2.0/Azure.Identity.xml"
+      ]
+    },
+    "EntityFrameworkCore.UseRowNumberForPaging/0.5.0": {
+      "sha512": "vSoowOIbV9ZOtJ77ePqhO+KHXcIgA44dTDFbe8MDpNfZkPGoz0g8PKv7CCVU5c4Usd8J0FmJ0WtYha3oJ7QLRg==",
+      "type": "package",
+      "path": "entityframeworkcore.userownumberforpaging/0.5.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "README.md",
+        "entityframeworkcore.userownumberforpaging.0.5.0.nupkg.sha512",
+        "entityframeworkcore.userownumberforpaging.nuspec",
+        "lib/net6.0/EntityFrameworkCore.UseRowNumberForPaging.dll",
+        "lib/net7.0/EntityFrameworkCore.UseRowNumberForPaging.dll",
+        "lib/net8.0/EntityFrameworkCore.UseRowNumberForPaging.dll"
       ]
     },
     "Humanizer.Core/2.14.1": {
@@ -4065,6 +4094,7 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "EntityFrameworkCore.UseRowNumberForPaging >= 0.5.0",
       "Microsoft.EntityFrameworkCore.Design >= 8.0.1",
       "Microsoft.EntityFrameworkCore.SqlServer >= 8.0.1",
       "MinimalApis.Extensions >= 0.11.0"
@@ -4107,6 +4137,10 @@
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
+          "EntityFrameworkCore.UseRowNumberForPaging": {
+            "target": "Package",
+            "version": "[0.5.0, )"
+          },
           "Microsoft.EntityFrameworkCore.Design": {
             "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
             "suppressParent": "All",

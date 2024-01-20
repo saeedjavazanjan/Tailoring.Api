@@ -1,4 +1,5 @@
-﻿using Tailoring.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
+using Tailoring.Entities;
 using Tailoring.Repository;
 
 namespace Tailoring.Endpoints;
@@ -6,6 +7,8 @@ namespace Tailoring.Endpoints;
 public static class PostEndpoints
 {
    private const  string GetPostEndPointName="Tailoring";
+   private const  string SearchPost="Search";
+   private const  string Category="Category";
 
 
 
@@ -13,13 +16,13 @@ public static class PostEndpoints
 
 
 
-        var group=routes.MapGroup("/search").WithParameterValidation();
+        var group=routes.MapGroup("/posts").WithParameterValidation();
 
         group.MapGet("/", async (IPostsRepository repository) 
             => (await repository.GetAllAsync()).Select(post=>post.AsDto()));
 
 
-        group.MapGet("/{id}",async (IPostsRepository repository,int id)=> 
+        group.MapGet("/onePost",async (IPostsRepository repository,int id)=> 
             {
                 Post? post = await repository.GetAsync(id);
                 return post is not null ? Results.Ok(post.AsDto()):Results.NotFound();
@@ -27,6 +30,23 @@ public static class PostEndpoints
             }
         ).WithName(GetPostEndPointName);
 
+        group.MapGet("/search", async (IPostsRepository repository, string query,int pageNumber,int pageSize)
+                =>
+        {
+            var param = new PostParams(pageNumber, pageSize);
+            IEnumerable<Post> searchedPosts = await repository.SearchAsync(query,param);
+            return searchedPosts is not null ? Results.Ok(searchedPosts
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize).Select(post=>post.AsDto())):Results.NotFound();
+        }).WithName(SearchPost);
+        
+        group.MapGet("/category", async (IPostsRepository repository, string category)
+            =>
+        {
+            IEnumerable<Post> categoryPosts = await repository.GetWithCategoryAsync(category);
+            return categoryPosts is not null ? Results.Ok(categoryPosts.Select(post=>post.AsDto())):Results.NotFound();
+        }).WithName(Category);
+        
         group.MapPost("/",async (IPostsRepository repository,CreatePostDto postDto)=>{
 
             Post post=new (){

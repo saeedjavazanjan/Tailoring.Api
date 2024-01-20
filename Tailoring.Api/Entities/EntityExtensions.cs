@@ -2,8 +2,8 @@
 
 public static class EntityExtensions
 {
-    public static GameDto AsDto(this Post post){
-        return new GameDto(
+    public static PostDto AsDto(this Post post){
+        return new PostDto(
             post.Id,
             post.Title,
             post.Category,
