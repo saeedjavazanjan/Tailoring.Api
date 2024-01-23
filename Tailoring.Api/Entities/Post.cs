@@ -21,6 +21,8 @@ public class Post
     [Required]
     public int  AuthorId { get; set; }
     
+    public required string AuthorAvatar { get; set; }
+
    
     public required List<string> FeaturedImages { get; set; }
   
@@ -30,6 +32,7 @@ public class Post
     public required string Video { get; set; }
     
     public required string Description { get; set; }
+    
     
     public DateTime DataAdded { get; set; }
     

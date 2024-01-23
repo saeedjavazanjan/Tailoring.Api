@@ -10,6 +10,7 @@ public static class EntityExtensions
             post.PostType,
             post.Author,
             post.AuthorId,
+            post.AuthorAvatar,
             post.FeaturedImages,
             post.Like,
             post.Video,

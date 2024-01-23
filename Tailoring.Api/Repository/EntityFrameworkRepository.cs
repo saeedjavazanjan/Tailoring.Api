@@ -35,12 +35,12 @@ public class EntityFrameworkRepository(TailoringContext dbContext) : IPostsRepos
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<Post>> SearchAsync(string query,PostParams postParams)
+    public async Task<IEnumerable<Post>> SearchAsync(string query)
     {
         IQueryable<Post> data = dbContext.Posts;
 
         return await data.
-            Where(data => data.Description.Contains(query) || data.Title.Contains(query) )
+            Where(data => data.Description.Contains(query) || data.Title.Contains(query) || data.Category.Contains(query) )
             
             .ToListAsync();
     }
