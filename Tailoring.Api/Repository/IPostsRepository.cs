@@ -13,7 +13,7 @@ public interface IPostsRepository
 
     Task UpdateAsync(Post updatedPost);
 
-    Task<IEnumerable<Post>> SearchAsync(string query,PostParams postParams);
+    Task<IEnumerable<Post>> SearchAsync(string query);
 
     Task<IEnumerable<Post>> GetWithCategoryAsync(string category);
 }

@@ -22,6 +22,7 @@ namespace Tailoring.Data.Migrations
                     PostType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Author = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AuthorId = table.Column<int>(type: "int", nullable: false),
+                    AuthorAvatar = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FeaturedImages = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Like = table.Column<int>(type: "int", nullable: false),
                     Video = table.Column<string>(type: "nvarchar(max)", nullable: false),

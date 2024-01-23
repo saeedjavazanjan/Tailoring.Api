@@ -18,8 +18,11 @@ public static class PostEndpoints
 
         var group=routes.MapGroup("/posts").WithParameterValidation();
 
-        group.MapGet("/", async (IPostsRepository repository) 
-            => (await repository.GetAllAsync()).Select(post=>post.AsDto()));
+        group.MapGet("/", async (IPostsRepository repository,int pageNumber,int pageSize) 
+            => (await repository.GetAllAsync())
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(post=>post.AsDto()));
 
 
         group.MapGet("/onePost",async (IPostsRepository repository,int id)=> 
@@ -33,18 +36,21 @@ public static class PostEndpoints
         group.MapGet("/search", async (IPostsRepository repository, string query,int pageNumber,int pageSize)
                 =>
         {
-            var param = new PostParams(pageNumber, pageSize);
-            IEnumerable<Post> searchedPosts = await repository.SearchAsync(query,param);
+            IEnumerable<Post> searchedPosts = await repository.SearchAsync(query);
             return searchedPosts is not null ? Results.Ok(searchedPosts
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize).Select(post=>post.AsDto())):Results.NotFound();
         }).WithName(SearchPost);
         
-        group.MapGet("/category", async (IPostsRepository repository, string category)
+        group.MapGet("/category", async (IPostsRepository repository, string category,int pageNumber,int pageSize)
             =>
         {
+
             IEnumerable<Post> categoryPosts = await repository.GetWithCategoryAsync(category);
-            return categoryPosts is not null ? Results.Ok(categoryPosts.Select(post=>post.AsDto())):Results.NotFound();
+            return categoryPosts is not null ? Results.Ok(categoryPosts
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(post=>post.AsDto())):Results.NotFound();
         }).WithName(Category);
         
         group.MapPost("/",async (IPostsRepository repository,CreatePostDto postDto)=>{
@@ -55,6 +61,7 @@ public static class PostEndpoints
                 PostType= postDto.PostType,
                 Author= postDto.Author,
                 AuthorId= postDto.AuthorId,
+                AuthorAvatar = postDto.AuthorAvatar,
                 FeaturedImages= postDto.FeaturedImages,
                 Like = postDto.Like,
                 Video = postDto.Video,
