@@ -18,14 +18,14 @@ public static class PostEndpoints
 
         var group=routes.MapGroup("/posts").WithParameterValidation();
 
-        group.MapGet("/", async (IPostsRepository repository,int pageNumber,int pageSize) 
+        group.MapGet("/", async (IRepository repository,int pageNumber,int pageSize) 
             => (await repository.GetAllAsync())
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .Select(post=>post.AsDto()));
 
 
-        group.MapGet("/onePost",async (IPostsRepository repository,int id)=> 
+        group.MapGet("/onePost",async (IRepository repository,int id)=> 
             {
                 Post? post = await repository.GetAsync(id);
                 return post is not null ? Results.Ok(post.AsDto()):Results.NotFound();
@@ -33,7 +33,7 @@ public static class PostEndpoints
             }
         ).WithName(GetPostEndPointName);
 
-        group.MapGet("/search", async (IPostsRepository repository, string query,int pageNumber,int pageSize)
+        group.MapGet("/search", async (IRepository repository, string query,int pageNumber,int pageSize)
                 =>
         {
             IEnumerable<Post> searchedPosts = await repository.SearchAsync(query);
@@ -42,7 +42,7 @@ public static class PostEndpoints
                 .Take(pageSize).Select(post=>post.AsDto())):Results.NotFound();
         }).WithName(SearchPost);
         
-        group.MapGet("/category", async (IPostsRepository repository, string category,int pageNumber,int pageSize)
+        group.MapGet("/category", async (IRepository repository, string category,int pageNumber,int pageSize)
             =>
         {
 
@@ -53,7 +53,7 @@ public static class PostEndpoints
                 .Select(post=>post.AsDto())):Results.NotFound();
         }).WithName(Category);
         
-        group.MapPost("/",async (IPostsRepository repository,CreatePostDto postDto)=>{
+        group.MapPost("/",async (IRepository repository,CreatePostDto postDto)=>{
 
             Post post=new (){
                 Title= postDto.Title,
@@ -76,7 +76,7 @@ public static class PostEndpoints
             return Results.CreatedAtRoute(GetPostEndPointName,new{post.Id},post);
         });
 
-        group.MapPut("/{id}",async (IPostsRepository repository,int id,UpdatePostDto updatePostDto)=>
+        group.MapPut("/{id}",async (IRepository repository,int id,UpdatePostDto updatePostDto)=>
             {
 
                 Post? existedPost = await repository.GetAsync(id);
@@ -103,7 +103,7 @@ public static class PostEndpoints
             }
         );
 
-        group.MapDelete("/{id}",async (IPostsRepository repository,int id)=>
+        group.MapDelete("/{id}",async (IRepository repository,int id)=>
         {
             Post? post =await repository.GetAsync(id);
 

@@ -2,8 +2,9 @@
 
 namespace Tailoring.Repository;
 
-public interface IPostsRepository
+public interface IRepository
 {
+    //posts
     Task CreateAsync(Post post);
     Task DeleteAsync(int id);
 
@@ -16,4 +17,13 @@ public interface IPostsRepository
     Task<IEnumerable<Post>> SearchAsync(string query);
 
     Task<IEnumerable<Post>> GetWithCategoryAsync(string category);
+    
+    //comments
+    Task AddCommentAsync(Comment comment);
+    Task DeleteComments(int id);
+    Task<IEnumerable<Comment>> GetPostCommentsAsync(int postId);
+
+    Task UpdateCommentAsync(Comment comment);
+
+
 }
