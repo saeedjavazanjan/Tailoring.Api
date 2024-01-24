@@ -22,5 +22,18 @@ public static class EntityExtensions
         );
 
 
-    }  
+    }
+
+    public static CommentDto AsDto(this Comment comment)
+    {
+        return new CommentDto(
+            comment.Id,
+            comment.UserId,
+            comment.PostId,
+            comment.Date,
+            comment.CommentText,
+            comment.Avatar,
+            comment.UserName
+        );
+    }
 }

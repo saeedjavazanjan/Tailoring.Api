@@ -18,7 +18,7 @@ public class User
     public required List<int> Likes { get; set; }
     public required List<int> Bookmarks { get; set; }
     
-
+    
 }
 
 
