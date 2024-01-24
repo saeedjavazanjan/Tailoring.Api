@@ -19,8 +19,37 @@ public record PostDto(
     int  HaveProduct
 );
 
+public record CommentDto(
+    int Id,
+    int UserId,
+    int PostId,
+    long Date,
+    string CommentText,
+    string Avatar,
+    string UserName
+);
+
+
+public record AddCommentDto(
+    [Required] int UserId,
+    [Required] int PostId,
+    [Required]long Date,
+    [Required] string CommentText,
+     string Avatar,
+     string UserName
+);
+
+public record UpdateCommentDto(
+    [Required] int UserId,
+    [Required] int PostId,
+    [Required]long Date,
+    [Required] string CommentText,
+    string Avatar,
+    string UserName
+);
+
 public record CreatePostDto(
-    [Required] [StringLength(20)] string Title,
+    [Required] [StringLength(100)] string Title,
     [Required] string Category,
    [Required] string PostType,
     [Required] string Author,
@@ -36,7 +65,7 @@ public record CreatePostDto(
 );
 
 public record UpdatePostDto(
-    [Required] [StringLength(20)] string Title,
+    [Required] [StringLength(100)] string Title,
     [Required] string Category,
     [Required] string PostType,
     [Required] string Author,
