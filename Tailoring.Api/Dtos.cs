@@ -34,18 +34,15 @@ public record AddCommentDto(
     [Required] int UserId,
     [Required] int PostId,
     [Required]long Date,
-    [Required] string CommentText,
-     string Avatar,
-     string UserName
+    [Required] string CommentText
+    
 );
 
 public record UpdateCommentDto(
     [Required] int UserId,
     [Required] int PostId,
     [Required]long Date,
-    [Required] string CommentText,
-    string Avatar,
-    string UserName
+    [Required] string CommentText
 );
 
 public record CreatePostDto(
