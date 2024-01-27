@@ -6,9 +6,9 @@ namespace Tailoring.Repository;
 
 public class EntityFrameworkRepository(TailoringContext dbContext) : IRepository
 {
-    public async Task CreateAsync(Post game)
+    public async Task CreateAsync(Post post)
     {
-        dbContext.Posts.Add(game);
+        dbContext.Posts.Add(post);
         await dbContext.SaveChangesAsync();
     }
 
@@ -39,11 +39,12 @@ public class EntityFrameworkRepository(TailoringContext dbContext) : IRepository
     {
         IQueryable<Post> data = dbContext.Posts;
 
-        return await data.
-            Where(data => data.Description.Contains(query) || data.Title.Contains(query) || data.Category.Contains(query) )
-            
+        return await data.Where(data =>
+                data.Description.Contains(query) || data.Title.Contains(query) || data.Category.Contains(query))
+
             .ToListAsync();
     }
+
     public async Task<IEnumerable<Post>> GetWithCategoryAsync(string category)
     {
         IQueryable<Post> data = dbContext.Posts;
@@ -51,6 +52,7 @@ public class EntityFrameworkRepository(TailoringContext dbContext) : IRepository
         return await data.Where(data => data.Category.Contains(category)).ToListAsync();
     }
 
+    //comments
     public async Task AddCommentAsync(Comment comment)
     {
         dbContext.Comments.Add(comment);
@@ -74,4 +76,15 @@ public class EntityFrameworkRepository(TailoringContext dbContext) : IRepository
         dbContext.Update(comment);
         await dbContext.SaveChangesAsync();
     }
+    public async Task<Comment?> GetCommentAsync(int id)
+    {
+        return await dbContext.Comments.FindAsync(id);
+
+    }
 }
+
+/*public async Task getUserAvatar(int UserId)
+{
+    return await dbContext.
+}
+}*/
