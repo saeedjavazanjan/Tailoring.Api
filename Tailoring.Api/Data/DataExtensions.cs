@@ -20,7 +20,7 @@ public static class DataExtensions
     {
         var connString=configuration.GetConnectionString("TailoringContext");
         services.AddSqlServer<TailoringContext>(connString)
-            .AddScoped<IPostsRepository,EntityFrameworkRepository>();
+            .AddScoped<IRepository,EntityFrameworkRepository>();
         return services;
 
     }

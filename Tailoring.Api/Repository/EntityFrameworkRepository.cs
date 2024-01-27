@@ -4,7 +4,7 @@ using Tailoring.Entities;
 
 namespace Tailoring.Repository;
 
-public class EntityFrameworkRepository(TailoringContext dbContext) : IPostsRepository
+public class EntityFrameworkRepository(TailoringContext dbContext) : IRepository
 {
     public async Task CreateAsync(Post game)
     {
@@ -14,7 +14,7 @@ public class EntityFrameworkRepository(TailoringContext dbContext) : IPostsRepos
 
     public async Task DeleteAsync(int id)
     {
-        await dbContext.Posts.Where(game => game.Id == id)
+        await dbContext.Posts.Where(post => post.Id == id)
             .ExecuteDeleteAsync();
     }
 
@@ -49,5 +49,29 @@ public class EntityFrameworkRepository(TailoringContext dbContext) : IPostsRepos
         IQueryable<Post> data = dbContext.Posts;
 
         return await data.Where(data => data.Category.Contains(category)).ToListAsync();
+    }
+
+    public async Task AddCommentAsync(Comment comment)
+    {
+        dbContext.Comments.Add(comment);
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task DeleteComments(int id)
+    {
+        await dbContext.Comments.Where(comment => comment.Id == id)
+            .ExecuteDeleteAsync();
+    }
+
+    public async Task<IEnumerable<Comment>> GetPostCommentsAsync(int postId)
+    {
+        return await dbContext.Comments.Where(comment => comment.PostId == postId)
+            .ToListAsync();
+    }
+
+    public async Task UpdateCommentAsync(Comment comment)
+    {
+        dbContext.Update(comment);
+        await dbContext.SaveChangesAsync();
     }
 }
