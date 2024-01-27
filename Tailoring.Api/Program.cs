@@ -8,5 +8,6 @@ var app = builder.Build();
 await app.Services.InitializeDbAsync();
 
 app.MapPostEndpoints();
+app.MapCommentsEndPoints();
 
 app.Run();

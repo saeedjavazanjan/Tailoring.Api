@@ -39,8 +39,6 @@ public record AddCommentDto(
 );
 
 public record UpdateCommentDto(
-    [Required] int UserId,
-    [Required] int PostId,
     [Required]long Date,
     [Required] string CommentText
 );

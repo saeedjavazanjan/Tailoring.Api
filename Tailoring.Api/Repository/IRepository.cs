@@ -25,5 +25,7 @@ public interface IRepository
 
     Task UpdateCommentAsync(Comment comment);
 
+    Task<Comment?> GetCommentAsync(int id);
+
 
 }
