@@ -6,7 +6,7 @@ public class Post
 {
     public int Id { get; set; }
 
-    [Required]
+    [Required][StringLength(100)]
     public required string Title { get; set; }
     
     [Required]
