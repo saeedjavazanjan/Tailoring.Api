@@ -7,11 +7,15 @@ public class User
     
     public int UserId { get; set; }
 
-    [Required]
+    [Required][StringLength(50)]
     public required string UserName { get; set; }
-    [Required]
+    [Required][StringLength(10)]
+    public required string PssWord { get; set; }
+    [Required][StringLength(12)]
     public required string PhoneNumber { get; set; }
     public required string Avatar { get; set; }
+    
+    [StringLength(500)]
     public required string Bio { get; set; }
     public int  Followers { get; set; }
     public int Followings { get; set; }

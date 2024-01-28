@@ -14,6 +14,8 @@ public class TailoringContext:DbContext
 
     public DbSet<Comment> Comments => Set<Comment>();
 
+    public DbSet<User> Users => Set<User>();
+
     /*protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
