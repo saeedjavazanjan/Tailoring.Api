@@ -52,7 +52,7 @@ public static class CommentsEndPoints
                 existedComment.Date = updatedCommentDto.Date;
 
                 await  repository.UpdateCommentAsync(existedComment);
-                return Results.NoContent();   
+                return Results.Ok("updated successfully");
 
             }
         );
