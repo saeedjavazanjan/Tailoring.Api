@@ -67,8 +67,13 @@ public record UserUpdateDto(
 
 public record RegisterUserDto(
     [Required][StringLength(50)] string UserName,
-    [Required][StringLength(10)] string Password,
     [Required][StringLength(12)] string PhoneNumber
+);
+
+public record AddUserDto(
+    [Required] [StringLength(50)] string UserName,
+    [Required] [StringLength(4)] string Passworsd,
+    [Required] [StringLength(12)] string PhoneNumber
 );
 
 

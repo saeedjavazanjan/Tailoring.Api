@@ -9,5 +9,6 @@ await app.Services.InitializeDbAsync();
 
 app.MapPostEndpoints();
 app.MapCommentsEndPoints();
+app.MapUsersEndPoints();
 
 app.Run();

@@ -1,4 +1,5 @@
-﻿using Tailoring.Entities;
+﻿using System.Runtime.InteropServices.JavaScript;
+using Tailoring.Entities;
 
 namespace Tailoring.Repository;
 
@@ -26,6 +27,11 @@ public interface IRepository
     Task UpdateCommentAsync(Comment comment);
 
     Task<Comment?> GetCommentAsync(int id);
+
+    
+    //users
+    Task AddUser (User user);
+    Task<User> GetRegesteredPhoneNumberAsync(string phoneNumber);
 
 
 }
