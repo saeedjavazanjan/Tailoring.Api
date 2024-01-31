@@ -135,3 +135,5 @@ C:\Users\WebVajhegan\RiderProjects\Tailoring\Tailoring.Api\obj\Debug\net8.0\Tail
 C:\Users\WebVajhegan\RiderProjects\Tailoring\Tailoring.Api\obj\Debug\net8.0\Tailoring.Api.genruntimeconfig.cache
 C:\Users\WebVajhegan\RiderProjects\Tailoring\Tailoring.Api\obj\Debug\net8.0\ref\Tailoring.Api.dll
 C:\Users\WebVajhegan\RiderProjects\Tailoring\Tailoring.Api\bin\Debug\net8.0\EntityFrameworkCore.UseRowNumberForPaging.dll
+C:\Users\WebVajhegan\RiderProjects\Tailoring\Tailoring.Api\bin\Debug\net8.0\Kavenegar.Core.dll
+C:\Users\WebVajhegan\RiderProjects\Tailoring\Tailoring.Api\bin\Debug\net8.0\Newtonsoft.Json.dll

@@ -10,7 +10,7 @@ public class User
     [Required][StringLength(50)]
     public required string UserName { get; set; }
     [Required][StringLength(10)]
-    public required string PssWord { get; set; }
+    public required string PassWord { get; set; }
     [Required][StringLength(12)]
     public required string PhoneNumber { get; set; }
     public required string Avatar { get; set; }

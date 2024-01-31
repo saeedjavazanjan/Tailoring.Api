@@ -81,6 +81,19 @@ public class EntityFrameworkRepository(TailoringContext dbContext) : IRepository
         return await dbContext.Comments.FindAsync(id);
 
     }
+    
+    //users
+
+    public async Task AddUser(User user)
+    {
+         dbContext.Users.Add(user);
+         await dbContext.SaveChangesAsync();
+    }
+
+    public async Task<User> GetRegesteredPhoneNumberAsync(string phoneNumber)
+    {
+        return await dbContext.Users.Where(user => user.PhoneNumber == phoneNumber).FirstOrDefaultAsync();
+    }
 }
 
 /*public async Task getUserAvatar(int UserId)
