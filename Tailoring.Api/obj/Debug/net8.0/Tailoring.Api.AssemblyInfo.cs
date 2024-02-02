@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Tailoring.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+26ca944e6c5d73c7f335a3b78834aaba49595f8f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b40134b3526819aaad1086c7e2fbd1928ed7f760")]
 [assembly: System.Reflection.AssemblyProductAttribute("Tailoring.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Tailoring.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
