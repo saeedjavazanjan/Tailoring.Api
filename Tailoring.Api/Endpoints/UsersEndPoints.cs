@@ -9,25 +9,25 @@ public static class UsersEndPoints
 
     public static RouteGroupBuilder MapUsersEndPoints(this IEndpointRouteBuilder routes){
         var group=routes.MapGroup("/users").WithParameterValidation();
-        string generatedPassword = GenerateRandomNo();
+        string generatedPassword = null;
         group.MapPost("/register",async (IRepository iRepository , RegisterUserDto registerUserDto)=>
         {
 
-            User existedUser = iRepository.GetRegesteredPhoneNumberAsync(registerUserDto.PhoneNumber);
-            
-        String result= await SendSMS.SendSMSToUser("رمز شما در خیاط باشی"+generatedPassword+"می باشد",registerUserDto.PhoneNumber);
+          //  User existedUser = await iRepository.GetRegesteredPhoneNumberAsync(registerUserDto.PhoneNumber);
+           generatedPassword = GenerateRandomNo();
+        String result= await SendSMS.SendSMSToUser(generatedPassword,registerUserDto.PhoneNumber);
             return Results.Ok(result);
         });
         
         group.MapPost("/registerPassword",async (IRepository iRepository ,AddUserDto addUserDto)=>{
 
-            if (addUserDto.Passworsd == generatedPassword)
+            if (addUserDto.Password == generatedPassword && generatedPassword !=null)
             {
                 
                 User user = new()
                 {
                     UserName = addUserDto.UserName,
-                    PassWord = addUserDto.Passworsd,
+                    PassWord = addUserDto.Password,
                     PhoneNumber = addUserDto.PhoneNumber,
                     Avatar = "",
                     Bio = "",
@@ -36,7 +36,13 @@ public static class UsersEndPoints
                     Followings = 0,
                     Likes = []
                 };
-                iRepository.AddUser(user);
+               await iRepository.AddUser(user);
+               return Results.Ok("با موفقیت ثبت شد.");
+            }
+            else
+            {
+                return Results.Conflict("رمز اشتباه است");
+
             }
         });
         

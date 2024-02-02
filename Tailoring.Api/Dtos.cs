@@ -72,7 +72,7 @@ public record RegisterUserDto(
 
 public record AddUserDto(
     [Required] [StringLength(50)] string UserName,
-    [Required] [StringLength(4)] string Passworsd,
+    [Required] [StringLength(4)] string Password,
     [Required] [StringLength(12)] string PhoneNumber
 );
 
