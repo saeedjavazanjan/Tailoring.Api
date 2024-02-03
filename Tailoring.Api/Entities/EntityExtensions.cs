@@ -42,7 +42,7 @@ public static class EntityExtensions
         return new UserDto(
             user.UserId,
             user.UserName,
-            user.PassWord,
+            user.PssWord,
             user.PhoneNumber,
             user.Avatar,
             user.Bio,

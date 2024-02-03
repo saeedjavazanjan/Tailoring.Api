@@ -31,7 +31,9 @@ public interface IRepository
     
     //users
     Task AddUser (User user);
-    Task<User> GetRegesteredPhoneNumberAsync(string phoneNumber);
+    Task<User?> GetRegesteredPhoneNumberAsync(string phoneNumber);
+    Task<User?> GetUserAsync(int id);
+    Task DeleteUser(int id);
 
 
 }
