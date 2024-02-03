@@ -90,9 +90,28 @@ public class EntityFrameworkRepository(TailoringContext dbContext) : IRepository
          await dbContext.SaveChangesAsync();
     }
 
-    public async Task<User> GetRegesteredPhoneNumberAsync(string phoneNumber)
+    public async Task<User?> GetRegesteredPhoneNumberAsync(string phoneNumber)
     {
-        return await dbContext.Users.Where(user => user.PhoneNumber == phoneNumber).FirstOrDefaultAsync();
+        try
+        {
+            return await dbContext.Users.FirstOrDefaultAsync(user => user.PhoneNumber == phoneNumber);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    public async Task<User?> GetUserAsync(int id)
+    {
+        return await dbContext.Users.FindAsync(id);
+
+    }
+    
+    public async Task DeleteUser(int id)
+    {
+        await dbContext.Users.Where(user => user.UserId == id)
+            .ExecuteDeleteAsync();
     }
 }
 

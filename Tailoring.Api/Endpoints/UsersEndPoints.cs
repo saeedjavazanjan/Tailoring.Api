@@ -6,28 +6,51 @@ namespace Tailoring.Endpoints;
 
 public static class UsersEndPoints
 {
-
+    private const  string CreatedUser="User";
+    private const string GetUser = "getUser";
     public static RouteGroupBuilder MapUsersEndPoints(this IEndpointRouteBuilder routes){
         var group=routes.MapGroup("/users").WithParameterValidation();
-        string generatedPassword = null;
+        string generatedPassword  = null;
+        
+        group.MapGet("/oneUser",async (IRepository repository,int id)=> 
+            {
+                User? user = await repository.GetUserAsync(id);
+                return user is not null ? Results.Ok(user.AsDto()):Results.NotFound();
+    
+            }
+        ).WithName(GetUser);
+        
+        
         group.MapPost("/register",async (IRepository iRepository , RegisterUserDto registerUserDto)=>
         {
+            generatedPassword =  GenerateRandomNo();
+            
+            User? existedUser = await iRepository.GetRegesteredPhoneNumberAsync(registerUserDto.PhoneNumber);
+            if (existedUser is not null )
+            {
+                return Results.Conflict("با این شماره قبلا ثبت نام صورت گرفته است.");
+            }
+            else
+            {
 
-          //  User existedUser = await iRepository.GetRegesteredPhoneNumberAsync(registerUserDto.PhoneNumber);
-           generatedPassword = GenerateRandomNo();
-        String result= await SendSMS.SendSMSToUser(generatedPassword,registerUserDto.PhoneNumber);
-            return Results.Ok(result);
+                String result= await SendSMS.SendSMSToUser(generatedPassword,registerUserDto.PhoneNumber);
+
+                return Results.Ok(result);
+                
+            }
         });
+
+      
         
         group.MapPost("/registerPassword",async (IRepository iRepository ,AddUserDto addUserDto)=>{
 
-            if (addUserDto.Password == generatedPassword && generatedPassword !=null)
+            if (addUserDto.Password == generatedPassword && generatedPassword != null)
             {
-                
+
                 User user = new()
                 {
                     UserName = addUserDto.UserName,
-                    PassWord = addUserDto.Password,
+                    PssWord = addUserDto.Password,
                     PhoneNumber = addUserDto.PhoneNumber,
                     Avatar = "",
                     Bio = "",
@@ -36,8 +59,20 @@ public static class UsersEndPoints
                     Followings = 0,
                     Likes = []
                 };
-               await iRepository.AddUser(user);
-               return Results.Ok("با موفقیت ثبت شد.");
+
+                User? regesterdeUser = await iRepository.GetRegesteredPhoneNumberAsync(addUserDto.PhoneNumber);
+
+                if (regesterdeUser is not null)
+                {
+                   
+                    return Results.Conflict("با این شماره قبلا ثبت نام صورت گرفته است.");
+
+                }
+                else
+                {
+                    await iRepository.AddUser(user);
+                    return Results.CreatedAtRoute(GetUser,new {user.UserId},user);
+                }
             }
             else
             {
@@ -45,10 +80,27 @@ public static class UsersEndPoints
 
             }
         });
+        group.MapDelete("/{id}",async (IRepository repository,int id)=>
+        {
+            User? user =await repository.GetUserAsync(id);
+
+            if(user is not null){
+                await repository.DeleteUser(id); 
+            }
+            return Results.NoContent();   
+        });
+        
         
         
         return group;
     }
+    
+    /*group.MapPost("/loginPasswordRequest", async (IRepository iRepository, RegisterUserDto registerUserDto) =>
+       {
+          // generatedPassword =  GenerateRandomNo();
+           String result= await SendSMS.SendSMSToUser(generatedPassword,registerUserDto.PhoneNumber);
+           return Results.Ok(result);
+       });*/
     
     private static string GenerateRandomNo()
     {
