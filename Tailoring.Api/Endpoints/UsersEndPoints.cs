@@ -16,14 +16,13 @@ public static class UsersEndPoints
             {
                 User? user = await repository.GetUserAsync(id);
                 return user is not null ? Results.Ok(user.AsDto()):Results.NotFound();
-    
             }
         ).WithName(GetUser);
         
         
         group.MapPost("/register",async (IRepository iRepository , RegisterUserDto registerUserDto)=>
         {
-            generatedPassword =  GenerateRandomNo();
+            generatedPassword = "1234";  //GenerateRandomNo();
             
             User? existedUser = await iRepository.GetRegesteredPhoneNumberAsync(registerUserDto.PhoneNumber);
             if (existedUser is not null )
@@ -35,12 +34,55 @@ public static class UsersEndPoints
 
                 String result= await SendSMS.SendSMSToUser(generatedPassword,registerUserDto.PhoneNumber);
 
-                return Results.Ok(result);
+                if (result.Equals("ارسال موفق"))
+                {
+                    return Results.Ok(result);
+                }
+                else
+                {
+                    return Results.Conflict(result);
+                }
                 
             }
         });
+        group.MapPost("/loginPasswordRequest", async (IRepository iRepository, RegisterUserDto registerUserDto) =>
+              {
+                 // generatedPassword =  GenerateRandomNo();
+                  String result= await SendSMS.SendSMSToUser(generatedPassword,registerUserDto.PhoneNumber);
 
+                  if (result.Equals("ارسال موفق"))
+                  {
+                      return Results.Ok(result);
+                  }
+                  
+                  else
+                  {
+                      return Results.Conflict(result);
+                  }
+              });
       
+        group.MapPost("/loginPasswordCheck", async (IRepository iRepository, AddUserDto addUserDto) =>
+        {
+            if (addUserDto.Password == generatedPassword && generatedPassword != null)
+            {
+                
+                User? regesterdeUser = await iRepository.GetRegesteredPhoneNumberAsync(addUserDto.PhoneNumber);
+
+                if (regesterdeUser is not null)
+                {
+                   
+                    return Results.CreatedAtRoute(GetUser,new {regesterdeUser.UserId},regesterdeUser);
+                }
+
+                return Results.NoContent();
+            }
+            else
+            {
+                return Results.Conflict("رمز اشتباه است");
+
+            }
+        });
+        
         
         group.MapPost("/registerPassword",async (IRepository iRepository ,AddUserDto addUserDto)=>{
 
@@ -95,12 +137,7 @@ public static class UsersEndPoints
         return group;
     }
     
-    /*group.MapPost("/loginPasswordRequest", async (IRepository iRepository, RegisterUserDto registerUserDto) =>
-       {
-          // generatedPassword =  GenerateRandomNo();
-           String result= await SendSMS.SendSMSToUser(generatedPassword,registerUserDto.PhoneNumber);
-           return Results.Ok(result);
-       });*/
+   
     
     private static string GenerateRandomNo()
     {
