@@ -27,39 +27,39 @@ public static class UsersEndPoints
             User? existedUser = await iRepository.GetRegesteredPhoneNumberAsync(registerUserDto.PhoneNumber);
             if (existedUser is not null )
             {
-                return Results.Conflict("با این شماره قبلا ثبت نام صورت گرفته است.");
+                return Results.Json("با این شماره قبلا ثبت نام صورت گرفته است.");
             }
             else
             {
 
                 String result= await SendSMS.SendSMSToUser(generatedPassword,registerUserDto.PhoneNumber);
 
-                if (result.Equals("ارسال موفق"))
-                {
+              //  if (result.Equals("ارسال موفق"))
+            //    {
                     return Results.Ok(result);
-                }
-                else
-                {
-                    return Results.Conflict(result);
-                }
+           //    }
+               // else
+            //    {
+               //    return Results.Json(result);
+           //    }
                 
             }
-        });
+        }) .RequireRateLimiting("fixed");
         group.MapPost("/loginPasswordRequest", async (IRepository iRepository, RegisterUserDto registerUserDto) =>
               {
                  // generatedPassword =  GenerateRandomNo();
                   String result= await SendSMS.SendSMSToUser(generatedPassword,registerUserDto.PhoneNumber);
 
-                  if (result.Equals("ارسال موفق"))
-                  {
+                //  if (result.Equals("ارسال موفق"))
+                 // {
                       return Results.Ok(result);
-                  }
+                //  }
                   
-                  else
-                  {
-                      return Results.Conflict(result);
-                  }
-              });
+               //   else
+               //   {
+                      return Results.Json(result);
+               //   }
+              }) .RequireRateLimiting("fixed");
       
         group.MapPost("/loginPasswordCheck", async (IRepository iRepository, AddUserDto addUserDto) =>
         {
