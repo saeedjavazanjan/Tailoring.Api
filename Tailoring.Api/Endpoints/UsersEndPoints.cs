@@ -1,6 +1,7 @@
 ﻿using Tailoring.Entities;
 using Tailoring.kavehneghar;
 using Tailoring.Repository;
+using Tailoring.Response;
 
 namespace Tailoring.Endpoints;
 
@@ -27,7 +28,7 @@ public static class UsersEndPoints
             User? existedUser = await iRepository.GetRegesteredPhoneNumberAsync(registerUserDto.PhoneNumber);
             if (existedUser is not null )
             {
-                return Results.Json("با این شماره قبلا ثبت نام صورت گرفته است.");
+                return Results.Conflict(new{error="با این شماره قبلا ثبت نام صورت گرفته است."});
             }
             else
             {
@@ -47,18 +48,25 @@ public static class UsersEndPoints
         }) .RequireRateLimiting("fixed");
         group.MapPost("/loginPasswordRequest", async (IRepository iRepository, RegisterUserDto registerUserDto) =>
               {
-                 // generatedPassword =  GenerateRandomNo();
-                  String result= await SendSMS.SendSMSToUser(generatedPassword,registerUserDto.PhoneNumber);
+                  User? regesterdeUser = await iRepository.GetRegesteredPhoneNumberAsync(registerUserDto.PhoneNumber);
 
-                //  if (result.Equals("ارسال موفق"))
-                 // {
+                  if (regesterdeUser is not null)
+                  {
+                      generatedPassword = "1234";
+                      // generatedPassword =  GenerateRandomNo();
+                      String result= await SendSMS.SendSMSToUser(generatedPassword,registerUserDto.PhoneNumber);
+                      //  if (result.Equals("ارسال موفق"))
+                      // {
                       return Results.Ok(result);
-                //  }
+                      //  }
                   
-               //   else
-               //   {
+                      //   else
+                      //   {
                       return Results.Json(result);
-               //   }
+                      //   }
+                  }
+                  return Results.NotFound(new { error="شما ثبت نام نکرده اید."});
+                  
               }) .RequireRateLimiting("fixed");
       
         group.MapPost("/loginPasswordCheck", async (IRepository iRepository, AddUserDto addUserDto) =>
@@ -71,20 +79,21 @@ public static class UsersEndPoints
                 if (regesterdeUser is not null)
                 {
                    
-                    return Results.CreatedAtRoute(GetUser,new {regesterdeUser.UserId},regesterdeUser);
+                    
+                      return Results.CreatedAtRoute(GetUser,new {regesterdeUser.UserId},regesterdeUser);
                 }
 
-                return Results.NoContent();
+                return Results.NotFound(new { error="شما ثبت نام نکرده اید."});
+
             }
             else
             {
-                return Results.Conflict("رمز اشتباه است");
-
+                return Results.Conflict(new { error="رمز اشتباه است"});
             }
         });
         
         
-        group.MapPost("/registerPassword",async (IRepository iRepository ,AddUserDto addUserDto)=>{
+        group.MapPost("/registerPasswordCheck",async (IRepository iRepository ,AddUserDto addUserDto)=>{
 
             if (addUserDto.Password == generatedPassword && generatedPassword != null)
             {
@@ -107,7 +116,7 @@ public static class UsersEndPoints
                 if (regesterdeUser is not null)
                 {
                    
-                    return Results.Conflict("با این شماره قبلا ثبت نام صورت گرفته است.");
+                    return Results.Json("با این شماره قبلا ثبت نام صورت گرفته است.");
 
                 }
                 else
@@ -118,7 +127,7 @@ public static class UsersEndPoints
             }
             else
             {
-                return Results.Conflict("رمز اشتباه است");
+                return Results.Json("رمز اشتباه است");
 
             }
         });
