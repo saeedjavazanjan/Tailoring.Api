@@ -116,7 +116,7 @@ public static class UsersEndPoints
                 if (regesterdeUser is not null)
                 {
                    
-                    return Results.Json("با این شماره قبلا ثبت نام صورت گرفته است.");
+                    return Results.Conflict(new{error="با این شماره قبلا ثبت نام صورت گرفته است."});
 
                 }
                 else
@@ -127,7 +127,7 @@ public static class UsersEndPoints
             }
             else
             {
-                return Results.Json("رمز اشتباه است");
+                return Results.Conflict(new { error="رمز اشتباه است"});
 
             }
         });
