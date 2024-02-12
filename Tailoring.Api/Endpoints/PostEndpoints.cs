@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Tailoring.Entities;
 using Tailoring.Repository;
 
@@ -52,29 +54,40 @@ public static class PostEndpoints
                 .Take(pageSize)
                 .Select(post=>post.AsDto())):Results.NotFound();
         }).WithName(Category);
-        
-        group.MapPost("/",async (IRepository repository,CreatePostDto postDto)=>{
-
-            Post post=new (){
-                Title= postDto.Title,
-                Category = postDto.Category,
-                PostType= postDto.PostType,
-                Author= postDto.Author,
-                AuthorId= postDto.AuthorId,
-                AuthorAvatar = postDto.AuthorAvatar,
-                FeaturedImages= postDto.FeaturedImages,
-                Like = postDto.Like,
-                Video = postDto.Video,
-                Description = postDto.Description,
-                DataAdded = postDto.DataAdded,
-                LongDataAdded = postDto.LongDataAdded,
-                HaveProduct = postDto.HaveProduct
-
-            };
        
-            await repository.CreateAsync(post);
-            return Results.CreatedAtRoute(GetPostEndPointName,new{post.Id},post);
-        });
+        group.MapPost("/",async (
+            IRepository repository,
+            CreatePostDto postDto
+            )=>{
+         // var userId=  user?.Claims?.FirstOrDefault(c => c.Type.Equals("sub", StringComparison.OrdinalIgnoreCase))?.Value;
+        //  if (userId.Equals(postDto.AuthorId))
+        //  {
+              Post post=new (){
+                  Title= postDto.Title,
+                  Category = postDto.Category,
+                  PostType= postDto.PostType,
+                  Author= postDto.Author,
+                  AuthorId= postDto.AuthorId,
+                  AuthorAvatar = postDto.AuthorAvatar,
+                  FeaturedImages= postDto.FeaturedImages,
+                  Like = postDto.Like,
+                  Video = postDto.Video,
+                  Description = postDto.Description,
+                  DataAdded = postDto.DataAdded,
+                  LongDataAdded = postDto.LongDataAdded,
+                  HaveProduct = postDto.HaveProduct
+
+              };
+              await repository.CreateAsync(post);
+              return Results.CreatedAtRoute(GetPostEndPointName,new{post.Id},post);
+
+       //   }
+
+      //    return Results.Unauthorized();
+
+
+
+        }).RequireAuthorization();
 
         group.MapPut("/{id}",async (IRepository repository,int id,UpdatePostDto updatePostDto)=>
             {
