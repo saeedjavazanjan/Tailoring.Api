@@ -1,4 +1,6 @@
-﻿using Tailoring.Entities;
+﻿using System.Security.Claims;
+using Tailoring.Authentication;
+using Tailoring.Entities;
 using Tailoring.kavehneghar;
 using Tailoring.Repository;
 using Tailoring.Response;
@@ -9,6 +11,8 @@ public static class UsersEndPoints
 {
     private const  string CreatedUser="User";
     private const string GetUser = "getUser";
+
+    
     public static RouteGroupBuilder MapUsersEndPoints(this IEndpointRouteBuilder routes){
         var group=routes.MapGroup("/users").WithParameterValidation();
         string generatedPassword  = null;
@@ -69,7 +73,11 @@ public static class UsersEndPoints
                   
               }) .RequireRateLimiting("fixed");
       
-        group.MapPost("/loginPasswordCheck", async (IRepository iRepository, AddUserDto addUserDto) =>
+        group.MapPost("/loginPasswordCheck", async (
+            IJwtProvider iJwtProvider,
+            IRepository iRepository,
+            AddUserDto addUserDto
+            ) =>
         {
             if (addUserDto.Password == generatedPassword && generatedPassword != null)
             {
@@ -78,9 +86,10 @@ public static class UsersEndPoints
 
                 if (regesterdeUser is not null)
                 {
-                   
+                    var token=  await iJwtProvider.Generate(regesterdeUser);
+                    // var userData=Results.CreatedAtRoute(GetUser,new {user.UserId},user);
+                    return Results.Ok(new{token=token,userData=regesterdeUser});
                     
-                      return Results.CreatedAtRoute(GetUser,new {regesterdeUser.UserId},regesterdeUser);
                 }
 
                 return Results.NotFound(new { error="شما ثبت نام نکرده اید."});
@@ -93,7 +102,11 @@ public static class UsersEndPoints
         });
         
         
-        group.MapPost("/registerPasswordCheck",async (IRepository iRepository ,AddUserDto addUserDto)=>{
+        group.MapPost("/registerPasswordCheck",async (
+            IJwtProvider iJwtProvider,
+            IRepository iRepository 
+            ,AddUserDto addUserDto
+            )=>{
 
             if (addUserDto.Password == generatedPassword && generatedPassword != null)
             {
@@ -122,7 +135,9 @@ public static class UsersEndPoints
                 else
                 {
                     await iRepository.AddUser(user);
-                    return Results.CreatedAtRoute(GetUser,new {user.UserId},user);
+                 var token=  await iJwtProvider.Generate(user);
+                    // var userData=Results.CreatedAtRoute(GetUser,new {user.UserId},user);
+                  return Results.Ok(new{token=token,userData=user});
                 }
             }
             else

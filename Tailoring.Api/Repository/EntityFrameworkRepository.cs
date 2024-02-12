@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Tailoring.Authentication;
 using Tailoring.Data;
 using Tailoring.Entities;
 
@@ -6,6 +7,9 @@ namespace Tailoring.Repository;
 
 public class EntityFrameworkRepository(TailoringContext dbContext) : IRepository
 {
+    
+
+    
     public async Task CreateAsync(Post post)
     {
         dbContext.Posts.Add(post);
