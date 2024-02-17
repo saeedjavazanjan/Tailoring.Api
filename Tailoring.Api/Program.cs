@@ -8,10 +8,10 @@ using Tailoring.Data;
 using Tailoring.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
-//var config = builder.Configuration;
+var config = builder.Configuration;
 builder.Services.AddRepositories(builder.Configuration);
 builder.Services.AddJwtProvider();
-/*builder.Services.AddAuthentication(x =>
+builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -22,17 +22,17 @@ builder.Services.AddJwtProvider();
         {
             ValidIssuer = config["JwtSettings:Issuer"],
             ValidAudience = config["JwtSettings:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:Key"]!)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:SecretKey"]!)),
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = false,
             ValidateIssuerSigningKey = true
         };
     }
-);*/
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+);
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
-builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
+//builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
+//builder.Services.AddAuthentication().AddJwtBearer();
 builder.Services.AddAuthorization();
 
 builder.Services.AddRateLimiter(options =>
@@ -55,9 +55,9 @@ var app = builder.Build();
 await app.Services.InitializeDbAsync();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapPostEndpoints();
 app.MapCommentsEndPoints();
 app.MapUsersEndPoints();
+app.MapPostEndpoints();
 app.UseRateLimiter();
 
 app.Run();
