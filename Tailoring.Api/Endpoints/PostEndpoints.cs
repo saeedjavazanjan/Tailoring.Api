@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Tailoring.Authentication;
 using Tailoring.Entities;
 using Tailoring.Repository;
 
@@ -57,11 +58,13 @@ public static class PostEndpoints
        
         group.MapPost("/",async (
             IRepository repository,
-            CreatePostDto postDto
+            CreatePostDto postDto,
+            ClaimsPrincipal? user
             )=>{
-         // var userId=  user?.Claims?.FirstOrDefault(c => c.Type.Equals("sub", StringComparison.OrdinalIgnoreCase))?.Value;
-        //  if (userId.Equals(postDto.AuthorId))
-        //  {
+          //var userId=  user?.Claims?.FirstOrDefault(c => c.Type.Equals("sub", StringComparison.OrdinalIgnoreCase))?.Value;
+          var userId= user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+          if (userId.Equals(postDto.AuthorId.ToString()))
+          {
               Post post=new (){
                   Title= postDto.Title,
                   Category = postDto.Category,
@@ -81,9 +84,9 @@ public static class PostEndpoints
               await repository.CreateAsync(post);
               return Results.CreatedAtRoute(GetPostEndPointName,new{post.Id},post);
 
-       //   }
+          }
 
-      //    return Results.Unauthorized();
+          return Results.Conflict( new { error="شما دسترسی به این کاربر ندارید"});
 
 
 

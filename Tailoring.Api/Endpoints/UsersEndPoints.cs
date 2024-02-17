@@ -25,7 +25,9 @@ public static class UsersEndPoints
         ).WithName(GetUser);
         
         
-        group.MapPost("/register",async (IRepository iRepository , RegisterUserDto registerUserDto)=>
+        group.MapPost("/register",async (
+            IRepository iRepository , 
+            RegisterUserDto registerUserDto)=>
         {
             generatedPassword = "1234";  //GenerateRandomNo();
             
@@ -50,7 +52,9 @@ public static class UsersEndPoints
                 
             }
         }) .RequireRateLimiting("fixed");
-        group.MapPost("/loginPasswordRequest", async (IRepository iRepository, RegisterUserDto registerUserDto) =>
+        group.MapPost("/loginPasswordRequest", async (
+            IRepository iRepository,
+            RegisterUserDto registerUserDto) =>
               {
                   User? regesterdeUser = await iRepository.GetRegesteredPhoneNumberAsync(registerUserDto.PhoneNumber);
 
