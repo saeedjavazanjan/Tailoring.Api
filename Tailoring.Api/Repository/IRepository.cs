@@ -34,6 +34,7 @@ public interface IRepository
     Task<User?> GetRegesteredPhoneNumberAsync(string phoneNumber);
     Task<User?> GetUserAsync(int id);
     Task DeleteUser(int id);
+    Task UpdateUserAsync(User user);
 
 
 }

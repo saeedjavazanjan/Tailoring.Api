@@ -2,6 +2,7 @@ using System.Text;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Tailoring.Authentication;
 using Tailoring.Data;
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 builder.Services.AddRepositories(builder.Configuration);
 builder.Services.AddJwtProvider();
+builder.Services.AddFileService();
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -53,11 +55,16 @@ var app = builder.Build();
 
 
 await app.Services.InitializeDbAsync();
+/*app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "Avatars")),
+    RequestPath = "/Avatars"
+});*/
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapCommentsEndPoints();
 app.MapUsersEndPoints();
 app.MapPostEndpoints();
 app.UseRateLimiter();
-
 app.Run();

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tailoring.Entities;
 
@@ -23,6 +24,9 @@ public class User
     public int Followings { get; set; }
     public required List<int> Likes { get; set; }
     public required List<int> Bookmarks { get; set; }
+    
+    [NotMapped]
+    public IFormFile? AvatarFile { get; set; }
     
     
 }

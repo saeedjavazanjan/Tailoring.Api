@@ -61,7 +61,6 @@ public static class PostEndpoints
             CreatePostDto postDto,
             ClaimsPrincipal? user
             )=>{
-          //var userId=  user?.Claims?.FirstOrDefault(c => c.Type.Equals("sub", StringComparison.OrdinalIgnoreCase))?.Value;
           var userId= user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
           if (userId.Equals(postDto.AuthorId.ToString()))
           {

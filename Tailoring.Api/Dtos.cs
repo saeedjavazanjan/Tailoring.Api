@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.SignalR;
 using Tailoring.Entities;
 
@@ -62,9 +63,9 @@ public record UserDto(
 
 public record UserUpdateDto(
     [Required][StringLength(50)] string UserName,
-    [Required][StringLength(10)] string Password,
     [Required][StringLength(12)] string PhoneNumber,
     string Avatar,
+    IFormFile? AvatarFile,
     string Bio
 );
 

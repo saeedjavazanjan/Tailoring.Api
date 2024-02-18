@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Tailoring.Authentication;
 using Tailoring.Entities;
 using Tailoring.kavehneghar;
@@ -52,6 +53,7 @@ public static class UsersEndPoints
                 
             }
         }) .RequireRateLimiting("fixed");
+        
         group.MapPost("/loginPasswordRequest", async (
             IRepository iRepository,
             RegisterUserDto registerUserDto) =>
@@ -108,8 +110,8 @@ public static class UsersEndPoints
         
         group.MapPost("/registerPasswordCheck",async (
             IJwtProvider iJwtProvider,
-            IRepository iRepository 
-            ,AddUserDto addUserDto
+            IRepository iRepository,
+            AddUserDto addUserDto
             )=>{
 
             if (addUserDto.Password == generatedPassword && generatedPassword != null)
@@ -150,6 +152,7 @@ public static class UsersEndPoints
 
             }
         });
+        
         group.MapDelete("/{id}",async (IRepository repository,int id)=>
         {
             User? user =await repository.GetUserAsync(id);
@@ -159,9 +162,45 @@ public static class UsersEndPoints
             }
             return Results.NoContent();   
         });
+
+        group.MapPut("/updateUser", async (
+            IRepository iRepository,
+            IFileService iFileService,
+            ClaimsPrincipal? user,
+          UserUpdateDto userUpdateDto
+            ) => {
+            var userId= user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId!= null)
+            {
+                User? currentUser = await iRepository.GetUserAsync(Int32.Parse(userId));
+                if(currentUser==null){
+                    return Results.NotFound(new{error="کاربر یافت نشد."}); 
+                }
+
+                if (userUpdateDto.AvatarFile != null)
+                {
+                    var fileResult = iFileService.SaveAvatar(userUpdateDto.AvatarFile);
+                    if (fileResult.Item1 == 1)
+                    {
+                        currentUser.Avatar = fileResult.Item2; // getting name of image
+                    }
+                   
+                }
+
+                currentUser.UserName = userUpdateDto.UserName;
+                currentUser.Bio = userUpdateDto.Bio;
+                await iRepository.UpdateUserAsync(currentUser);
+                return Results.Ok();
+
+
+            }
+
+            return Results.NoContent();
+
+
+        }).RequireAuthorization();
         
-        
-        
+
         return group;
     }
     
