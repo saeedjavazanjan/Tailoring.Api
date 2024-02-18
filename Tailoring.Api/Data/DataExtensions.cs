@@ -31,10 +31,17 @@ public static class DataExtensions
 
     public static IServiceCollection AddJwtProvider(
         this IServiceCollection services
-
     )
     {
         services.AddScoped<IJwtProvider, JwtProvider>();
+        return services;
+    }
+
+    public static IServiceCollection AddFileService(
+        this IServiceCollection services
+        )
+    {
+        services.AddScoped<IFileService, FileService>();
         return services;
     }
 

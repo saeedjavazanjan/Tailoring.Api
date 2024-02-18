@@ -117,6 +117,13 @@ public class EntityFrameworkRepository(TailoringContext dbContext) : IRepository
         await dbContext.Users.Where(user => user.UserId == id)
             .ExecuteDeleteAsync();
     }
+
+    public async Task UpdateUserAsync(User user)
+    {
+        dbContext.Update(user);
+        await dbContext.SaveChangesAsync();
+        
+    }
 }
 
 /*public async Task getUserAvatar(int UserId)
