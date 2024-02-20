@@ -13,6 +13,7 @@ var config = builder.Configuration;
 builder.Services.AddRepositories(builder.Configuration);
 builder.Services.AddJwtProvider();
 builder.Services.AddFileService();
+builder.Services.AddAntiforgery();
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -55,16 +56,17 @@ var app = builder.Build();
 
 
 await app.Services.InitializeDbAsync();
-/*app.UseStaticFiles(new StaticFileOptions
+app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
         Path.Combine(builder.Environment.ContentRootPath, "Avatars")),
     RequestPath = "/Avatars"
-});*/
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapCommentsEndPoints();
 app.MapUsersEndPoints();
 app.MapPostEndpoints();
 app.UseRateLimiter();
+app.UseAntiforgery();
 app.Run();

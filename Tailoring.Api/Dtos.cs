@@ -63,11 +63,10 @@ public record UserDto(
 
 public record UserUpdateDto(
     [Required][StringLength(50)] string UserName,
-    [Required][StringLength(12)] string PhoneNumber,
-    string Avatar,
     IFormFile? AvatarFile,
     string Bio
 );
+
 
 public record RegisterUserDto(
     [Required][StringLength(50)] string UserName,
