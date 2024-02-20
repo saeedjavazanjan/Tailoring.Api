@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 using Tailoring.Authentication;
 using Tailoring.Entities;
@@ -167,7 +168,7 @@ public static class UsersEndPoints
             IRepository iRepository,
             IFileService iFileService,
             ClaimsPrincipal? user,
-          UserUpdateDto userUpdateDto
+          [FromForm] UserUpdateDto userUpdateDto
             ) => {
             var userId= user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId!= null)
@@ -179,6 +180,7 @@ public static class UsersEndPoints
 
                 if (userUpdateDto.AvatarFile != null)
                 {
+                    iFileService.DeleteAvatar(currentUser.Avatar);
                     var fileResult = iFileService.SaveAvatar(userUpdateDto.AvatarFile);
                     if (fileResult.Item1 == 1)
                     {
@@ -195,12 +197,17 @@ public static class UsersEndPoints
 
             }
 
-            return Results.NoContent();
+            return Results.Conflict(new{error="کاربر یافت نشد."});
 
 
-        }).RequireAuthorization();
+        }).RequireAuthorization().DisableAntiforgery();
         
-
+        group.MapGet("antiforgery/token", (IAntiforgery forgeryService, HttpContext context) =>
+        {
+            var tokens = forgeryService.GetAndStoreTokens(context);
+            var xsrfToken = tokens.RequestToken!;
+            return TypedResults.Content(xsrfToken, "text/plain");
+        });
         return group;
     }
     

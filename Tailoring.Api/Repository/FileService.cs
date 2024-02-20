@@ -47,7 +47,7 @@ public class FileService:IFileService
         try
         {
             var wwwPath = this._environment.WebRootPath;
-            var path = Path.Combine(wwwPath, "Uploads\\", imageFileName);
+            var path = Path.Combine( "Avatars\\", imageFileName);
             if (System.IO.File.Exists(path))
             {
                 System.IO.File.Delete(path);
