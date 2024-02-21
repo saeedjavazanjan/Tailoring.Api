@@ -19,12 +19,21 @@ public static class UsersEndPoints
         var group=routes.MapGroup("/users").WithParameterValidation();
         string generatedPassword  = null;
         
-        group.MapGet("/oneUser",async (IRepository repository,int id)=> 
+        group.MapGet("/currentUser",async (
+                IRepository repository,
+                ClaimsPrincipal user
+                )=> 
             {
-                User? user = await repository.GetUserAsync(id);
-                return user is not null ? Results.Ok(user.AsDto()):Results.NotFound();
+                var userId= user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (userId != null)
+                {
+                    User? currentUser = await repository.GetUserAsync(Int32.Parse(userId));
+                    return currentUser is not null ? Results.Ok(currentUser.AsDto()) : Results.NotFound(new{error="کاربر یافت نشد."});
+                }
+                return Results.Conflict(new{error="کاربر یافت نشد."});
+ 
             }
-        ).WithName(GetUser);
+        ).WithName(GetUser).RequireAuthorization();
         
         
         group.MapPost("/register",async (
@@ -184,7 +193,7 @@ public static class UsersEndPoints
                     var fileResult = iFileService.SaveAvatar(userUpdateDto.AvatarFile);
                     if (fileResult.Item1 == 1)
                     {
-                        currentUser.Avatar = fileResult.Item2; // getting name of image
+                        currentUser.Avatar = "http://10.0.2.2:5198/Avatars/"+fileResult.Item2; 
                     }
                    
                 }
@@ -202,12 +211,12 @@ public static class UsersEndPoints
 
         }).RequireAuthorization().DisableAntiforgery();
         
-        group.MapGet("antiforgery/token", (IAntiforgery forgeryService, HttpContext context) =>
+        /*group.MapGet("antiforgery/token", (IAntiforgery forgeryService, HttpContext context) =>
         {
             var tokens = forgeryService.GetAndStoreTokens(context);
             var xsrfToken = tokens.RequestToken!;
             return TypedResults.Content(xsrfToken, "text/plain");
-        });
+        });*/
         return group;
     }
     
