@@ -40,7 +40,80 @@ public class FileService:IFileService
         catch (Exception ex)
         {
             return new Tuple<int, string>(0, "Error has occured");
-        }    }
+        }
+        
+    }
+
+    public Tuple<int, string> SavePostVideo(IFormFile postVideo,String postId)
+    {
+        try
+        {
+            var contentPath = this._environment.ContentRootPath;
+            var path = Path.Combine(contentPath, "postsVideos",postId); 
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            var ext = Path.GetExtension(postVideo.FileName);
+            var allowedExtensions = new string[] { ".mp3", ".mp4", ".wma" };
+            if (!allowedExtensions.Contains(ext))
+            {
+                string msg = string.Format("Only {0} extensions are allowed", string.Join(",", allowedExtensions));
+                return new Tuple<int, string>(0, msg);
+            }
+            string uniqueString = Guid.NewGuid().ToString();
+            // we are trying to create a unique filename here
+            var newFileName = uniqueString + ext;
+            var fileWithPath = Path.Combine(path, newFileName);
+            var stream = new FileStream(fileWithPath, FileMode.Create);
+            postVideo.CopyTo(stream);
+            stream.Close();
+            return new Tuple<int, string>(1, newFileName);
+        }
+        catch (Exception ex)
+        {
+            return new Tuple<int, string>(0, "Error has occured");
+        }
+        
+    }
+
+    public Tuple<int, string> SavePostImages(List<IFormFile> postImages,String postId)
+    {
+        var contentPath = this._environment.ContentRootPath;
+        var path = Path.Combine(contentPath, "postsImages",postId); 
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+        try
+        {
+        foreach (var postImage in postImages)
+        {
+           
+            var ext = Path.GetExtension(postImage.FileName);
+            var allowedExtensions = new string[] { ".mp3", ".mp4", ".wma" };
+            if (!allowedExtensions.Contains(ext))
+            {
+                string msg = string.Format("Only {0} extensions are allowed", string.Join(",", allowedExtensions));
+                return new Tuple<int, string>(0, msg);
+            }
+            string uniqueString = Guid.NewGuid().ToString();
+            // we are trying to create a unique filename here
+            var newFileName = uniqueString + ext;
+            var fileWithPath = Path.Combine(path, newFileName);
+            var stream = new FileStream(fileWithPath, FileMode.Create);
+            postImage.CopyTo(stream);
+            stream.Close();
+            return new Tuple<int, string>(1, newFileName);
+        }
+        }
+        catch (Exception ex)
+        {
+            return new Tuple<int, string>(0, "Error has occured");
+        }
+        
+    }
 
     public bool DeleteAvatar(string imageFileName)
     {
@@ -59,4 +132,14 @@ public class FileService:IFileService
         {
             return false;
         }    }
+
+    public bool DeletePostImage(string imageFileName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool DeletePostVideo(string videoFileName)
+    {
+        throw new NotImplementedException();
+    }
 }
