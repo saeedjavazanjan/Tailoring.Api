@@ -56,23 +56,41 @@ public static class PostEndpoints
                 .Select(post=>post.AsDto())):Results.NotFound();
         }).WithName(Category);
        
-        group.MapPost("/",async (
-            IRepository repository,
-            CreatePostDto postDto,
+        group.MapPost("/uploadPost",async (
+            IFileService iFileService,
+            IRepository iRepository,
+            [FromForm] CreatePostDto postDto,
             ClaimsPrincipal? user
             )=>{
           var userId= user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-          if (userId.Equals(postDto.AuthorId.ToString()))
+          User? currentUser = await iRepository.GetUserAsync(Int32.Parse(userId));
+          if(currentUser==null){
+              return Results.NotFound(new{error="کاربر یافت نشد."}); 
+          }
+          var userName = currentUser.UserName;
+          if (userId.Equals(currentUser.UserId.ToString()))
           {
+              if (postDto.Video != null)
+              {
+                  var fileResult = iFileService.SaveAvatar(userUpdateDto.AvatarFile);
+                  if (fileResult.Item1 == 1)
+                  {
+                      currentUser.Avatar = "http://10.0.2.2:5198/Avatars/"+fileResult.Item2; 
+                  }
+                   
+              }
+              
+              
+              
               Post post=new (){
                   Title= postDto.Title,
                   Category = postDto.Category,
                   PostType= postDto.PostType,
-                  Author= postDto.Author,
-                  AuthorId= postDto.AuthorId,
-                  AuthorAvatar = postDto.AuthorAvatar,
+                  Author= userName,
+                  AuthorId= int.Parse(userId),
+                  AuthorAvatar = "postDto.AuthorAvatar",
                   FeaturedImages= postDto.FeaturedImages,
-                  Like = postDto.Like,
+                  Like = 0,
                   Video = postDto.Video,
                   Description = postDto.Description,
                   DataAdded = postDto.DataAdded,
