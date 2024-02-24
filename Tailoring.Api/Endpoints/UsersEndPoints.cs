@@ -28,7 +28,8 @@ public static class UsersEndPoints
                 if (userId != null)
                 {
                     User? currentUser = await repository.GetUserAsync(Int32.Parse(userId));
-                    return currentUser is not null ? Results.Ok(currentUser.AsDto()) : Results.NotFound(new{error="کاربر یافت نشد."});
+                    return currentUser is not null ? 
+                        Results.Ok(currentUser.AsDto()) : Results.NotFound(new{error="کاربر یافت نشد."});
                 }
                 return Results.Conflict(new{error="کاربر یافت نشد."});
  
