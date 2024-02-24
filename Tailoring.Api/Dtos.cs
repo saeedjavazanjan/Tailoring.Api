@@ -1,4 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.SignalR;
+using Tailoring.Entities;
 
 namespace Tailoring;
 
@@ -42,6 +45,42 @@ public record UpdateCommentDto(
     [Required]long Date,
     [Required] string CommentText
 );
+
+public record UserDto(
+ int UserId,
+ [Required][StringLength(50)] string UserName,
+ [Required][StringLength(10)] string Password,
+ [Required][StringLength(12)] string PhoneNumber,
+ string Avatar,
+ string Bio,
+ int Followers,
+ int Followings,
+ List<int> Likes,
+ List<int> Bookmarks
+     );
+
+        
+
+public record UserUpdateDto(
+    [Required][StringLength(50)] string UserName,
+    IFormFile? AvatarFile,
+    string Bio
+);
+
+
+public record RegisterUserDto(
+    [Required][StringLength(50)] string UserName,
+    [Required][StringLength(12)] string PhoneNumber
+);
+
+
+
+public record AddUserDto(
+     [StringLength(50)] string UserName,
+    [Required] [StringLength(4)] string Password,
+    [Required] [StringLength(12)] string PhoneNumber
+);
+
 
 public record CreatePostDto(
     [Required] [StringLength(100)] string Title,

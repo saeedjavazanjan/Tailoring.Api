@@ -36,4 +36,21 @@ public static class EntityExtensions
             comment.UserName
         );
     }
+
+    public static UserDto AsDto(this User user)
+    {
+        return new UserDto(
+            user.UserId,
+            user.UserName,
+            user.PssWord,
+            user.PhoneNumber,
+            user.Avatar,
+            user.Bio,
+            user.Followers,
+            user.Followings,
+            user.Likes,
+            user.Bookmarks
+
+        );
+    }
 }

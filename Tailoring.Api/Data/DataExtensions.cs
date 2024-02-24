@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
+using Tailoring.Authentication;
 using Tailoring.Repository;
 
 namespace Tailoring.Data;
@@ -24,4 +27,24 @@ public static class DataExtensions
         return services;
 
     }
+
+
+    public static IServiceCollection AddJwtProvider(
+        this IServiceCollection services
+    )
+    {
+        services.AddScoped<IJwtProvider, JwtProvider>();
+        return services;
+    }
+
+    public static IServiceCollection AddFileService(
+        this IServiceCollection services
+        )
+    {
+        services.AddScoped<IFileService, FileService>();
+        return services;
+    }
+
+    
+    
 }

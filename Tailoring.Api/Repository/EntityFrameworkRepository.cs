@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Tailoring.Authentication;
 using Tailoring.Data;
 using Tailoring.Entities;
 
@@ -6,6 +7,9 @@ namespace Tailoring.Repository;
 
 public class EntityFrameworkRepository(TailoringContext dbContext) : IRepository
 {
+    
+
+    
     public async Task CreateAsync(Post post)
     {
         dbContext.Posts.Add(post);
@@ -80,6 +84,45 @@ public class EntityFrameworkRepository(TailoringContext dbContext) : IRepository
     {
         return await dbContext.Comments.FindAsync(id);
 
+    }
+    
+    //users
+
+    public async Task AddUser(User user)
+    {
+         dbContext.Users.Add(user);
+         await dbContext.SaveChangesAsync();
+    }
+
+    public async Task<User?> GetRegesteredPhoneNumberAsync(string phoneNumber)
+    {
+        try
+        {
+            return await dbContext.Users.FirstOrDefaultAsync(user => user.PhoneNumber == phoneNumber);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    public async Task<User?> GetUserAsync(int id)
+    {
+        return await dbContext.Users.FindAsync(id);
+
+    }
+    
+    public async Task DeleteUser(int id)
+    {
+        await dbContext.Users.Where(user => user.UserId == id)
+            .ExecuteDeleteAsync();
+    }
+
+    public async Task UpdateUserAsync(User user)
+    {
+        dbContext.Update(user);
+        await dbContext.SaveChangesAsync();
+        
     }
 }
 
