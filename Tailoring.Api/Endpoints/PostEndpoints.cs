@@ -70,16 +70,7 @@ public static class PostEndpoints
           var userName = currentUser.UserName;
           if (userId.Equals(currentUser.UserId.ToString()))
           {
-              if (postDto.Video != null)
-              {
-                  var fileResult = iFileService.SaveAvatar(userUpdateDto.AvatarFile);
-                  if (fileResult.Item1 == 1)
-                  {
-                      currentUser.Avatar = "http://10.0.2.2:5198/Avatars/"+fileResult.Item2; 
-                  }
-                   
-              }
-              
+             
               
               
               Post post=new (){
@@ -88,26 +79,53 @@ public static class PostEndpoints
                   PostType= postDto.PostType,
                   Author= userName,
                   AuthorId= int.Parse(userId),
-                  AuthorAvatar = "postDto.AuthorAvatar",
-                  FeaturedImages= postDto.FeaturedImages,
+                  AuthorAvatar = currentUser.Avatar,
+                  FeaturedImages= [],
                   Like = 0,
-                  Video = postDto.Video,
+                  Video = "",
                   Description = postDto.Description,
                   DataAdded = postDto.DataAdded,
                   LongDataAdded = postDto.LongDataAdded,
                   HaveProduct = postDto.HaveProduct
 
               };
-              await repository.CreateAsync(post);
-              return Results.CreatedAtRoute(GetPostEndPointName,new{post.Id},post);
+              await iRepository.CreateAsync(post);
 
+              Post? existedPost = await iRepository.GetAsync(post.Id);
+              
+              if (postDto.Video != null && postDto.PostType=="video")
+              {
+                  var fileResult = iFileService.SavePostVideo(postDto.Video,post.Id.ToString());
+                  if (fileResult.Item1 == 1)
+                  {
+                      existedPost!.Video = fileResult.Item2; 
+                  }
+
+              }
+
+              if (postDto.FeaturedImages != null && postDto.PostType == "image")
+              {
+                  var fileResult = 
+                      iFileService.SavePostImages(postDto.FeaturedImages, post.Id.ToString());
+                  if (fileResult.Item1==1)
+                  {
+                      existedPost!.FeaturedImages = fileResult.Item2;
+                  }
+              }
+              
+
+              await iRepository.UpdateAsync(existedPost!);
+
+              return Results.CreatedAtRoute(GetPostEndPointName,new{post.Id},post);
+              
+              
           }
 
           return Results.Conflict( new { error="شما دسترسی به این کاربر ندارید"});
 
 
 
-        }).RequireAuthorization();
+        }).RequireAuthorization().DisableAntiforgery();
 
         group.MapPut("/{id}",async (IRepository repository,int id,UpdatePostDto updatePostDto)=>
             {
