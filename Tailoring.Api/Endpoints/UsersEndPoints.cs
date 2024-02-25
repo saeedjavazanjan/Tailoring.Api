@@ -194,7 +194,7 @@ public static class UsersEndPoints
                     var fileResult = iFileService.SaveAvatar(userUpdateDto.AvatarFile);
                     if (fileResult.Item1 == 1)
                     {
-                        currentUser.Avatar = "http://10.0.2.2:5198/Avatars/"+fileResult.Item2; 
+                        currentUser.Avatar = fileResult.Item2; 
                     }
                    
                 }

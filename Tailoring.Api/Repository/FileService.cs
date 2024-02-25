@@ -9,6 +9,8 @@ public class FileService:IFileService
         _environment = environment;
     }
 
+    private const string BaseUrl = "http://10.0.2.2:5198/";
+
 
     public Tuple<int, string> SaveAvatar(IFormFile avatarFile)
     {
@@ -35,7 +37,7 @@ public class FileService:IFileService
             var stream = new FileStream(fileWithPath, FileMode.Create);
             avatarFile.CopyTo(stream);
             stream.Close();
-            return new Tuple<int, string>(1, newFileName);
+            return new Tuple<int, string>(1,BaseUrl+ "Avatars/"+newFileName);
         }
         catch (Exception ex)
         {
@@ -69,7 +71,7 @@ public class FileService:IFileService
             var stream = new FileStream(fileWithPath, FileMode.Create);
             postVideo.CopyTo(stream);
             stream.Close();
-            return new Tuple<int, string>(1, newFileName);
+            return new Tuple<int, string>(1,BaseUrl+ "postsVideos/"+postId+newFileName);
         }
         catch (Exception ex)
         {
@@ -78,7 +80,7 @@ public class FileService:IFileService
         
     }
 
-    public Tuple<int, string> SavePostImages(List<IFormFile> postImages,String postId)
+    public Tuple<int, List<string>> SavePostImages(IFormFileCollection postImages,String postId)
     {
         var contentPath = this._environment.ContentRootPath;
         var path = Path.Combine(contentPath, "postsImages",postId); 
@@ -86,17 +88,18 @@ public class FileService:IFileService
         {
             Directory.CreateDirectory(path);
         }
-        try
-        {
+
+        List<string> listOfImages = new List<string>();
         foreach (var postImage in postImages)
         {
-           
+            try
+            {  
             var ext = Path.GetExtension(postImage.FileName);
-            var allowedExtensions = new string[] { ".mp3", ".mp4", ".wma" };
+            var allowedExtensions = new string[] {".jpg", ".png", ".jpeg"};
             if (!allowedExtensions.Contains(ext))
             {
                 string msg = string.Format("Only {0} extensions are allowed", string.Join(",", allowedExtensions));
-                return new Tuple<int, string>(0, msg);
+                return new Tuple<int,  List<string>>(0, [msg]);
             }
             string uniqueString = Guid.NewGuid().ToString();
             // we are trying to create a unique filename here
@@ -105,14 +108,17 @@ public class FileService:IFileService
             var stream = new FileStream(fileWithPath, FileMode.Create);
             postImage.CopyTo(stream);
             stream.Close();
-            return new Tuple<int, string>(1, newFileName);
+            listOfImages.Add(BaseUrl+"postsImages/"+postId+newFileName);
+           // return new Tuple<int, string>(1, newFileName);
         }
+            catch (Exception ex)
+            {
+                return new Tuple<int,  List<string>>(0, ["Error has occured"]);
+            }
         }
-        catch (Exception ex)
-        {
-            return new Tuple<int, string>(0, "Error has occured");
-        }
-        
+
+        return new Tuple<int, List<string>>(1, listOfImages);
+
     }
 
     public bool DeleteAvatar(string imageFileName)
