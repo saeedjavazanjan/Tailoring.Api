@@ -84,7 +84,7 @@ public static class PostEndpoints
                   Like = 0,
                   Video = "",
                   Description = postDto.Description,
-                  DataAdded = postDto.DataAdded,
+                  DataAdded = DateTime.Now,
                   LongDataAdded = postDto.LongDataAdded,
                   HaveProduct = postDto.HaveProduct
 
@@ -99,6 +99,10 @@ public static class PostEndpoints
                   if (fileResult.Item1 == 1)
                   {
                       existedPost!.Video = fileResult.Item2; 
+                  }
+                  else
+                  {
+                      return Results.Conflict(new { error = fileResult.Item2});
                   }
 
               }
