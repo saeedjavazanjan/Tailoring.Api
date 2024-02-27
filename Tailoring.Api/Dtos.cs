@@ -89,7 +89,6 @@ public record CreatePostDto(
     IFormFileCollection?  FeaturedImages,
      IFormFile? Video,
     string Description,
-    DateTime DataAdded,
     long LongDataAdded,
     [Required] int HaveProduct
 );
