@@ -68,6 +68,7 @@ app.UseAuthorization();
 app.MapCommentsEndPoints();
 app.MapUsersEndPoints();
 app.MapPostEndpoints();
+app.MapProductEndPoints();
 app.UseRateLimiter();
 app.UseAntiforgery();
 app.Run();

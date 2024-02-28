@@ -35,6 +35,11 @@ public interface IRepository
     Task<User?> GetUserAsync(int id);
     Task DeleteUser(int id);
     Task UpdateUserAsync(User user);
+    
+    //prodocts
+    Task CreateProductAsync(Product product);
+    Task<Product?> GetProductAsync(int id);
+    Task UpdateProductAsync(Product updatedProduct);
 
 
 }

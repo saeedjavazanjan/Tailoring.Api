@@ -139,6 +139,51 @@ public class FileService:IFileService
 
     }
 
+    public Tuple<int, List<string>> SaveProductImages(IFormFileCollection postImages, string postId)
+    {
+        var contentPath = this._environment.ContentRootPath;
+        var path = Path.Combine(contentPath, "productImages",postId); 
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+
+        List<string> listOfImages = new List<string>();
+        foreach (var postImage in postImages)
+        {
+            try
+            {
+                var ext = Path.GetExtension(postImage.FileName);
+                var allowedExtensions = new string[] { ".jpg", ".png", ".jpeg" };
+                
+                    if (!allowedExtensions.Contains(ext))
+                    {
+                        string msg = string.Format("Only {0} extensions are allowed",
+                            string.Join(",", allowedExtensions));
+                        return new Tuple<int, List<string>>(0, [msg]);
+                    }
+
+                    string uniqueString = Guid.NewGuid().ToString();
+                    // we are trying to create a unique filename here
+                    var newFileName = uniqueString + ext;
+                    var fileWithPath = Path.Combine(path, newFileName);
+                    var stream = new FileStream(fileWithPath, FileMode.Create);
+                    postImage.CopyTo(stream);
+                    stream.Close();
+                    listOfImages.Add(BaseUrl + "productImages/" + postId + newFileName);
+                    // return new Tuple<int, string>(1, newFileName);
+                
+            }
+            catch (Exception ex)
+            {
+                return new Tuple<int, List<string>>(0, ["Error has occured"]);
+            }
+        }
+
+        return new Tuple<int, List<string>>(1, listOfImages);
+        
+    }
+
     public bool DeleteAvatar(string imageFileName)
     {
         try

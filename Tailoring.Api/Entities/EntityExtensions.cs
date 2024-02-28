@@ -23,6 +23,23 @@ public static class EntityExtensions
 
 
     }
+    public static ProductDto AsDto(this Product product)
+    {
+        return new ProductDto(
+            product.Id,
+            product.Name,
+            product.Description,
+            product.TypeOfProduct,
+            product.Mas,
+            product.Supply,
+            product.Unit,
+            product.Price,
+            product.PostId,
+            product.Images,
+            product.AttachedFile
+
+        );
+    }
 
     public static CommentDto AsDto(this Comment comment)
     {
@@ -53,4 +70,6 @@ public static class EntityExtensions
 
         );
     }
+    
+    
 }
