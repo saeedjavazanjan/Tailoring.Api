@@ -124,6 +124,24 @@ public class EntityFrameworkRepository(TailoringContext dbContext) : IRepository
         await dbContext.SaveChangesAsync();
         
     }
+    
+    //products
+    public async Task CreateProductAsync(Product product)
+    {
+        dbContext.Products.Add(product);
+        await dbContext.SaveChangesAsync();
+    }
+    
+    public async Task<Product?> GetProductAsync(int id)
+    {
+        return await dbContext.Products.FindAsync(id);
+
+    }
+    public async Task UpdateProductAsync(Product updatedProduct)
+    {
+        dbContext.Update(updatedProduct);
+        await dbContext.SaveChangesAsync();
+    }
 }
 
 /*public async Task getUserAvatar(int UserId)

@@ -93,6 +93,34 @@ public record CreatePostDto(
     [Required] int HaveProduct
 );
 
+public record ProductDto(
+    int Id,
+    string Name,
+    string Description,
+    string TypeOfProduct,
+    string Mas,
+    string Supply,
+    string Unit,
+    string Price,
+    int PostId,
+    List <String> Images,
+    string AttachedFile
+        );
+
+
+public record AddProductDto(
+    [Required] [StringLength(100)]  string Name,
+    [Required] string Description,
+    [Required]  string TypeOfProduct,
+    [Required]  string Mas,
+    [Required] string Supply,
+    [Required]  string Unit,
+    [Required]  string Price,
+    int PostId,
+    IFormFileCollection? Images,
+    string AttachedFile
+);
+
 public record UpdatePostDto(
     [Required] [StringLength(100)] string Title,
     [Required] string Category,
