@@ -61,8 +61,9 @@ app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
         Path.Combine(builder.Environment.ContentRootPath, "Avatars")),
-    RequestPath = "/Avatars"
+    RequestPath = "/Avatars",
 });
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapCommentsEndPoints();

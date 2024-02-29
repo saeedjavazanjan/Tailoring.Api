@@ -12,6 +12,7 @@ public static class PostEndpoints
    private const  string GetPostEndPointName="Tailoring";
    private const  string SearchPost="Search";
    private const  string Category="Category";
+   private const  string GetUserPosts="UserPosts";
 
 
 
@@ -26,7 +27,30 @@ public static class PostEndpoints
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .Select(post=>post.AsDto()));
-
+        
+        group.MapGet("/AuthorPosts", async (
+                IRepository repository,
+                int pageNumber,
+                int pageSize,
+                ClaimsPrincipal? user
+                ) =>
+        {
+            var userId= user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            try
+            {
+                IEnumerable<Post> posts = await repository.GetUserPostsAsync(Int32.Parse(userId));
+                return posts is not null ? Results.Ok(posts
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(post=>post.AsDto())):Results.NotFound();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return Results.Conflict(new { error = e.ToString() });
+            }
+          
+        }).WithName(GetUserPosts).RequireAuthorization();
 
         group.MapGet("/onePost",async (IRepository repository,int id)=> 
             {
@@ -36,7 +60,11 @@ public static class PostEndpoints
             }
         ).WithName(GetPostEndPointName);
 
-        group.MapGet("/search", async (IRepository repository, string query,int pageNumber,int pageSize)
+        group.MapGet("/search", async (
+                IRepository repository,
+                string query,
+                int pageNumber,
+                int pageSize)
                 =>
         {
             IEnumerable<Post> searchedPosts = await repository.SearchAsync(query);
@@ -45,7 +73,11 @@ public static class PostEndpoints
                 .Take(pageSize).Select(post=>post.AsDto())):Results.NotFound();
         }).WithName(SearchPost);
         
-        group.MapGet("/category", async (IRepository repository, string category,int pageNumber,int pageSize)
+        group.MapGet("/category", async (
+                IRepository repository,
+                string category,
+                int pageNumber,
+                int pageSize)
             =>
         {
 
@@ -95,7 +127,8 @@ public static class PostEndpoints
               
               if (postDto.Video != null && postDto.PostType=="video")
               {
-                  var fileResult = iFileService.SavePostVideo(postDto.Video,post.Id.ToString());
+                  var fileResult =
+                      iFileService.SavePostVideo(postDto.Video,post.Id.ToString());
                   if (fileResult.Item1 == 1)
                   {
                       existedPost!.Video = fileResult.Item2; 
@@ -131,7 +164,10 @@ public static class PostEndpoints
 
         }).RequireAuthorization().DisableAntiforgery();
 
-        group.MapPut("/{id}",async (IRepository repository,int id,UpdatePostDto updatePostDto)=>
+        group.MapPut("/{id}",async (
+                IRepository repository,
+                int id,
+                UpdatePostDto updatePostDto)=>
             {
 
                 Post? existedPost = await repository.GetAsync(id);

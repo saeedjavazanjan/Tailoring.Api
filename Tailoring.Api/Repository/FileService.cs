@@ -74,7 +74,7 @@ public class FileService:IFileService
                 var stream = new FileStream(fileWithPath, FileMode.Create);
                 postVideo.CopyTo(stream);
                 stream.Close();
-                return new Tuple<int, string>(1, BaseUrl + "postsVideos/" + postId + newFileName);
+                return new Tuple<int, string>(1, BaseUrl + "postsVideos/" + postId+"/" + newFileName);
             }
             else
             {
@@ -125,7 +125,7 @@ public class FileService:IFileService
                     var stream = new FileStream(fileWithPath, FileMode.Create);
                     postImage.CopyTo(stream);
                     stream.Close();
-                    listOfImages.Add(BaseUrl + "postsImages/" + postId + newFileName);
+                    listOfImages.Add(BaseUrl + "postsImages/" + postId+"/" + newFileName);
                     // return new Tuple<int, string>(1, newFileName);
                 }
             }
@@ -170,7 +170,7 @@ public class FileService:IFileService
                     var stream = new FileStream(fileWithPath, FileMode.Create);
                     postImage.CopyTo(stream);
                     stream.Close();
-                    listOfImages.Add(BaseUrl + "productImages/" + postId + newFileName);
+                    listOfImages.Add(BaseUrl + "productImages/" + postId+"/" + newFileName);
                     // return new Tuple<int, string>(1, newFileName);
                 
             }

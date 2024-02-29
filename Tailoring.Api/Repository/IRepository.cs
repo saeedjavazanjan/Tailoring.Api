@@ -13,6 +13,8 @@ public interface IRepository
 
     Task<IEnumerable<Post>> GetAllAsync();
 
+    Task<IEnumerable<Post>> GetUserPostsAsync(int userId);
+
     Task UpdateAsync(Post updatedPost);
 
     Task<IEnumerable<Post>> SearchAsync(string query);
