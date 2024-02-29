@@ -22,7 +22,7 @@ public static class CommentsEndPoints
         {
             IEnumerable<Comment> postComments = await repository.GetPostCommentsAsync(postId);
             return postComments is not null ? Results.Ok(postComments
-                .Select(post=>post.AsDto())):Results.NotFound();
+                .Select(comment  =>comment.AsDto())):Results.NotFound();
         }).WithName(GetPostComments);
         
         group.MapPost("/",async (IRepository repository,AddCommentDto commentDto)=>{

@@ -32,6 +32,12 @@ public class EntityFrameworkRepository(TailoringContext dbContext) : IRepository
     {
         return await dbContext.Posts.AsNoTracking().ToListAsync();
     }
+    
+    public async Task<IEnumerable<Post>> GetUserPostsAsync(int userId)
+    {
+        return await dbContext.Posts.Where(post => post.AuthorId== userId)
+            .ToListAsync();
+    }
 
     public async Task UpdateAsync(Post updatedPost)
     {

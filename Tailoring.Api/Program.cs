@@ -60,9 +60,10 @@ await app.Services.InitializeDbAsync();
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
-        Path.Combine(builder.Environment.ContentRootPath, "Avatars")),
-    RequestPath = "/Avatars"
+        Path.Combine(builder.Environment.ContentRootPath, "files")),
+    RequestPath = "/files",
 });
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapCommentsEndPoints();

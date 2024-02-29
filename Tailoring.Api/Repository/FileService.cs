@@ -9,7 +9,7 @@ public class FileService:IFileService
         _environment = environment;
     }
 
-    private const string BaseUrl = "http://10.0.2.2:5198/";
+    private const string BaseUrl = "http://10.0.2.2:5198/files/";
 
 
     public Tuple<int, string> SaveAvatar(IFormFile avatarFile)
@@ -17,7 +17,7 @@ public class FileService:IFileService
         try
         {
             var contentPath = this._environment.ContentRootPath;
-            var path = Path.Combine(contentPath, "Avatars"); 
+            var path = Path.Combine(contentPath,"files", "Avatars"); 
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
@@ -53,7 +53,7 @@ public class FileService:IFileService
             if (postVideo.Length < 5242880)
             {
                 var contentPath = this._environment.ContentRootPath;
-                var path = Path.Combine(contentPath, "postsVideos", postId);
+                var path = Path.Combine(contentPath,"files", "postsVideos", postId);
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
@@ -74,7 +74,7 @@ public class FileService:IFileService
                 var stream = new FileStream(fileWithPath, FileMode.Create);
                 postVideo.CopyTo(stream);
                 stream.Close();
-                return new Tuple<int, string>(1, BaseUrl + "postsVideos/" + postId + newFileName);
+                return new Tuple<int, string>(1, BaseUrl + "postsVideos/" + postId+"/" + newFileName);
             }
             else
             {
@@ -93,7 +93,7 @@ public class FileService:IFileService
     public Tuple<int, List<string>> SavePostImages(IFormFileCollection postImages,String postId)
     {
         var contentPath = this._environment.ContentRootPath;
-        var path = Path.Combine(contentPath, "postsImages",postId); 
+        var path = Path.Combine(contentPath,"files", "postsImages",postId); 
         if (!Directory.Exists(path))
         {
             Directory.CreateDirectory(path);
@@ -125,7 +125,7 @@ public class FileService:IFileService
                     var stream = new FileStream(fileWithPath, FileMode.Create);
                     postImage.CopyTo(stream);
                     stream.Close();
-                    listOfImages.Add(BaseUrl + "postsImages/" + postId + newFileName);
+                    listOfImages.Add(BaseUrl + "postsImages/" + postId+"/" + newFileName);
                     // return new Tuple<int, string>(1, newFileName);
                 }
             }
@@ -142,7 +142,7 @@ public class FileService:IFileService
     public Tuple<int, List<string>> SaveProductImages(IFormFileCollection postImages, string postId)
     {
         var contentPath = this._environment.ContentRootPath;
-        var path = Path.Combine(contentPath, "productImages",postId); 
+        var path = Path.Combine(contentPath,"files", "productImages",postId); 
         if (!Directory.Exists(path))
         {
             Directory.CreateDirectory(path);
@@ -170,7 +170,7 @@ public class FileService:IFileService
                     var stream = new FileStream(fileWithPath, FileMode.Create);
                     postImage.CopyTo(stream);
                     stream.Close();
-                    listOfImages.Add(BaseUrl + "productImages/" + postId + newFileName);
+                    listOfImages.Add(BaseUrl + "productImages/" + postId+"/" + newFileName);
                     // return new Tuple<int, string>(1, newFileName);
                 
             }

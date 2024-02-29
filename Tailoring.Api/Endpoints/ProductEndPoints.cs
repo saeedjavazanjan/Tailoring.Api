@@ -61,6 +61,14 @@ public static class ProductEndPoints
           if(currentUser==null){
               return Results.NotFound(new{error="کاربر یافت نشد."}); 
           }
+
+          var post =await iRepository.GetAsync(productDto.PostId);
+          if (post.AuthorId != Int32.Parse(userId))
+          {
+              return Results.Conflict( new { error="شما دسترسی به این کاربر ندارید"});
+
+          }
+
           if (userId.Equals(currentUser.UserId.ToString()))
           {
              
