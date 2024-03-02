@@ -194,16 +194,30 @@ public static class PostEndpoints
             }
         );
 
-        group.MapDelete("/{id}",async (IRepository repository,int id)=>
+        group.MapDelete("/{id}",async (
+            IRepository repository,
+            int id,
+            ClaimsPrincipal? user
+            )=>
         {
+            var userId= user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             Post? post =await repository.GetAsync(id);
 
-            if(post is not null){
-                await repository.DeleteAsync(id); 
+            if (post.AuthorId == Int32.Parse(userId))
+            {
+                if(post is not null){
+                    await repository.DeleteAsync(id);
+                    return Results.Ok();
+                }
+                return Results.NoContent();   
+
             }
 
-            return Results.NoContent();   
-        });
+            return Results.Unauthorized();
+
+
+        }).RequireAuthorization();
 
 
         return group;
