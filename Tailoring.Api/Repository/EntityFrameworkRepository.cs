@@ -140,7 +140,7 @@ public class EntityFrameworkRepository(TailoringContext dbContext) : IRepository
     
     public async Task<Product?> GetProductAsync(int id)
     {
-        return await dbContext.Products.FindAsync(id);
+        return await dbContext.Products.Where(Product => Product.PostId == id).FirstAsync();
 
     }
     public async Task UpdateProductAsync(Product updatedProduct)
