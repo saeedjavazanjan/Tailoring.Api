@@ -25,7 +25,7 @@ public static class ProductEndPoints
         group.MapGet("/oneProduct",async (IRepository repository,int id)=> 
             {
                 Product? product = await repository.GetProductAsync(id);
-                return product is not null ? Results.Ok(product.AsDto()):Results.NotFound();
+                return product is not null ? Results.Ok(product.AsDto()):Results.NotFound(new{error="مورد یافت نشد"});
     
             }
         ).WithName(GetProductEndPointName);
