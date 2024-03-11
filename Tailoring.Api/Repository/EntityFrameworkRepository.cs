@@ -27,7 +27,7 @@ public class EntityFrameworkRepository(TailoringContext dbContext) : IRepository
         return await dbContext.Posts.FindAsync(id);
 
     }
-
+    
     public async Task<IEnumerable<Post>> GetAllAsync()
     {
         return await dbContext.Posts.AsNoTracking().ToListAsync();
@@ -138,15 +138,27 @@ public class EntityFrameworkRepository(TailoringContext dbContext) : IRepository
         await dbContext.SaveChangesAsync();
     }
     
-    public async Task<Product?> GetProductAsync(int id)
+    public async Task<Product?> GetProductOfPostAsync(int id)
     {
         return await dbContext.Products.Where(Product => Product.PostId == id).FirstAsync();
+
+    }
+
+    public async Task<Product?> GetProductAsync(int id)
+    {
+        return await dbContext.Products.FindAsync(id);
 
     }
     public async Task UpdateProductAsync(Product updatedProduct)
     {
         dbContext.Update(updatedProduct);
         await dbContext.SaveChangesAsync();
+    }
+    
+    public async Task DeleteProductAsync(int id)
+    {
+        await dbContext.Products.Where(product => product.Id == id)
+            .ExecuteDeleteAsync();
     }
 }
 

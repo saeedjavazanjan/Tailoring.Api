@@ -140,7 +140,11 @@ public static class PostEndpoints
 
               }
 
-              if (postDto.FeaturedImages != null && postDto.PostType == "image")
+              if (postDto.FeaturedImages != null && 
+                  postDto.PostType == "image" &&
+                  postDto.FeaturedImages.Count>0
+
+                  )
               {
                   var fileResult = 
                       iFileService.SavePostImages(postDto.FeaturedImages, post.Id.ToString());
@@ -164,37 +168,42 @@ public static class PostEndpoints
 
         }).RequireAuthorization().DisableAntiforgery();
 
-        group.MapPut("/{id}",async (
+        group.MapPut("update/{id}",async (
                 IRepository repository,
-                int id,
-                UpdatePostDto updatePostDto)=>
+                int id, 
+                UpdatePostDto updatePostDto,
+                ClaimsPrincipal? user)=>
             {
+                var userId= user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                User? currentUser = await repository.GetUserAsync(Int32.Parse(userId));
 
                 Post? existedPost = await repository.GetAsync(id);
 
                 if(existedPost==null){
-                    return Results.NotFound(); 
-                } 
+                    return Results.NotFound(new{error="پست مورد نظر یافت نشد"}); 
+                }
+
+                if (existedPost.AuthorId != Int32.Parse(userId))
+                {
+                    return Results.Unauthorized();
+                }
+
                 existedPost.Title=updatePostDto.Title;
                 existedPost.Category = updatePostDto.Category;
-                existedPost.PostType=updatePostDto.PostType;
-                existedPost.Author=updatePostDto.Author;
-                existedPost.AuthorId=updatePostDto.AuthorId;
-                existedPost.FeaturedImages=updatePostDto.FeaturedImages;
-                existedPost.Like=updatePostDto.Like;
-                existedPost.Video=updatePostDto.Video;
+                existedPost.AuthorAvatar = currentUser!.Avatar;
                 existedPost.Description=updatePostDto.Description;
-                existedPost.DataAdded=updatePostDto.DataAdded;
+                existedPost.DataAdded=DateTime.Now;
                 existedPost.LongDataAdded=updatePostDto.LongDataAdded;
                 existedPost.HaveProduct=updatePostDto.HaveProduct;
-
+                
                 await  repository.UpdateAsync(existedPost);
-                return Results.NoContent();   
+                return Results.Ok("با موفقیت به روز رسانی شد");   
 
             }
-        );
+        ).RequireAuthorization();
 
         group.MapDelete("/{id}",async (
+            IFileService fileService,
             IRepository repository,
             int id,
             ClaimsPrincipal? user
@@ -207,7 +216,18 @@ public static class PostEndpoints
             if (post.AuthorId == Int32.Parse(userId))
             {
                 if(post is not null){
+                    if (post.PostType == "image")
+                    {
+                        fileService.DeletePostImage(id.ToString());
+                    }
+                    else if(post.PostType == "video")
+                    {
+                        fileService.DeletePostVideo(id.ToString());
+                    }
                     await repository.DeleteAsync(id);
+
+                    
+                    
                     return Results.Ok();
                 }
                 return Results.NoContent();   

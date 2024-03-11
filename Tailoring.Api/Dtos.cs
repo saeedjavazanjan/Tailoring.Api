@@ -121,18 +121,20 @@ public record AddProductDto(
     string AttachedFile
 );
 
+public record UpdateProductDto(
+    [Required] [StringLength(100)]  string Name,
+    [Required] string Description,
+    [Required]  string TypeOfProduct,
+    [Required]  string Mas,
+    [Required] string Supply,
+    [Required]  string Unit,
+    [Required]  string Price,
+    string AttachedFile
+);
+
 public record UpdatePostDto(
     [Required] [StringLength(100)] string Title,
     [Required] string Category,
-    [Required] string PostType,
-    [Required] string Author,
-    [Required] int AuthorId,
-    string AuthorAvatar,
-    List<string> FeaturedImages,
-    [Required] int Like,
-    string Video,
     string Description,
-    DateTime DataAdded,
     long LongDataAdded,
-    [Required] int HaveProduct
-);
+    [Required] int HaveProduct);
