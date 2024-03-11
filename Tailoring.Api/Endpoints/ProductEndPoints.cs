@@ -24,7 +24,7 @@ public static class ProductEndPoints
 
         group.MapGet("/oneProduct",async (IRepository repository,int id)=> 
             {
-                Product? product = await repository.GetProductAsync(id);
+                Product? product = await repository.GetProductOfPostAsync(id);
                 return product is not null ? Results.Ok(product.AsDto()):Results.NotFound(new{error="مورد یافت نشد"});
     
             }
@@ -90,7 +90,10 @@ public static class ProductEndPoints
 
               Product? existedProduct = await iRepository.GetProductAsync(product.Id);
               
-              if (productDto.Images != null)
+              if (productDto.Images != null &&
+                  productDto.Images.Count>0
+
+                  )
               {
                   var fileResult = 
                       iFileService.SaveProductImages(productDto.Images, product.Id.ToString());
@@ -114,45 +117,73 @@ public static class ProductEndPoints
 
         }).RequireAuthorization().DisableAntiforgery();
 
-        /*group.MapPut("/{id}",async (IRepository repository,int id,UpdatePostDto updatePostDto)=>
+        group.MapPut("update/{id}",async (
+                IRepository repository,
+                int id, 
+                UpdateProductDto updateProductDto,
+                ClaimsPrincipal? user)=>
             {
+                var userId= user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-                Post? existedPost = await repository.GetAsync(id);
-
-                if(existedPost==null){
-                    return Results.NotFound(); 
+                Product? existedProduct = await repository.GetProductAsync(id);
+                if(existedProduct==null){
+                    return Results.NotFound(new{error="محصول مورد نظر یافت نشد"}); 
                 } 
-                existedPost.Title=updatePostDto.Title;
-                existedPost.Category = updatePostDto.Category;
-                existedPost.PostType=updatePostDto.PostType;
-                existedPost.Author=updatePostDto.Author;
-                existedPost.AuthorId=updatePostDto.AuthorId;
-                existedPost.FeaturedImages=updatePostDto.FeaturedImages;
-                existedPost.Like=updatePostDto.Like;
-                existedPost.Video=updatePostDto.Video;
-                existedPost.Description=updatePostDto.Description;
-                existedPost.DataAdded=updatePostDto.DataAdded;
-                existedPost.LongDataAdded=updatePostDto.LongDataAdded;
-                existedPost.HaveProduct=updatePostDto.HaveProduct;
+                if(existedProduct!=null){
+                    Post? existedPost = await repository.GetAsync(existedProduct.PostId);
+                    if (existedPost.AuthorId != Int32.Parse(userId))
+                    {
+                        return Results.Unauthorized();
+                    }
+                } 
+                
+               
+                existedProduct.Name=updateProductDto.Name;
+                existedProduct.Description = updateProductDto.Description;
+                existedProduct.Mas=updateProductDto.Mas;
+                existedProduct.Supply=updateProductDto.Supply;
+                existedProduct.Unit=updateProductDto.Unit;
+                existedProduct.Price=updateProductDto.Price;
+                
+                await  repository.UpdateProductAsync(existedProduct);
+                return Results.Ok("با موفقیت به روز رسانی شد");   
 
-                await  repository.UpdateAsync(existedPost);
+            }
+        ).RequireAuthorization();
+
+        group.MapDelete("/{id}",async (
+            IFileService fileService,
+            IRepository repository,
+            int id,
+            ClaimsPrincipal? user
+        )=>
+        {
+            var userId= user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            Product? product =await repository.GetProductAsync(id);
+            Post? post =await repository.GetAsync(product.PostId);
+
+
+            if (post.AuthorId == Int32.Parse(userId))
+            {
+                if(product is not null){
+                   
+                        fileService.DeleteProductImage(id.ToString());
+                    
+                    await repository.DeleteProductAsync(id);
+
+                    
+                    
+                    return Results.Ok();
+                }
                 return Results.NoContent();   
 
             }
-        );*/
 
-        /*
-        group.MapDelete("/{id}",async (IRepository repository,int id)=>
-        {
-            Post? post =await repository.GetAsync(id);
+            return Results.Unauthorized();
 
-            if(post is not null){
-                await repository.DeleteAsync(id); 
-            }
 
-            return Results.NoContent();   
-        });
-        */
+        }).RequireAuthorization();
 
 
         return group;

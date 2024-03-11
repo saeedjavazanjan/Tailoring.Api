@@ -48,48 +48,52 @@ public class FileService:IFileService
 
     public Tuple<int, string> SavePostVideo(IFormFile postVideo,String postId)
     {
-        try
-        {
-            if (postVideo.Length < 5242880)
+        
+            try
             {
-                var contentPath = this._environment.ContentRootPath;
-                var path = Path.Combine(contentPath,"files", "postsVideos", postId);
-                if (!Directory.Exists(path))
+
+                if (postVideo.Length < 5242880)
                 {
-                    Directory.CreateDirectory(path);
+                    var contentPath = this._environment.ContentRootPath;
+                    var path = Path.Combine(contentPath, "files", "postsVideos", postId);
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+
+                    var ext = Path.GetExtension(postVideo.FileName);
+                    var allowedExtensions = new string[] { ".mp3", ".mp4", ".wma" };
+                    if (!allowedExtensions.Contains(ext))
+                    {
+                        string msg = string.Format("Only {0} extensions are allowed",
+                            string.Join(",", allowedExtensions));
+                        return new Tuple<int, string>(0, msg);
+                    }
+
+                    string uniqueString = Guid.NewGuid().ToString();
+                    // we are trying to create a unique filename here
+                    var newFileName = uniqueString + ext;
+                    var fileWithPath = Path.Combine(path, newFileName);
+                    var stream = new FileStream(fileWithPath, FileMode.Create);
+                    postVideo.CopyTo(stream);
+                    stream.Close();
+                    return new Tuple<int, string>(1, BaseUrl + "postsVideos/" + postId + "/" + newFileName);
+                }
+                else
+                {
+                    return new Tuple<int, string>(0, "فایل ارسالی نباید بیشتر از 500 مگ باشد");
+
                 }
 
-                var ext = Path.GetExtension(postVideo.FileName);
-                var allowedExtensions = new string[] { ".mp3", ".mp4", ".wma" };
-                if (!allowedExtensions.Contains(ext))
-                {
-                    string msg = string.Format("Only {0} extensions are allowed", string.Join(",", allowedExtensions));
-                    return new Tuple<int, string>(0, msg);
-                }
-
-                string uniqueString = Guid.NewGuid().ToString();
-                // we are trying to create a unique filename here
-                var newFileName = uniqueString + ext;
-                var fileWithPath = Path.Combine(path, newFileName);
-                var stream = new FileStream(fileWithPath, FileMode.Create);
-                postVideo.CopyTo(stream);
-                stream.Close();
-                return new Tuple<int, string>(1, BaseUrl + "postsVideos/" + postId+"/" + newFileName);
             }
-            else
+            catch (Exception ex)
             {
-                return new Tuple<int, string>(0, "فایل ارسالی نباید بیشتر از 500 مگ باشد");
-
+                return new Tuple<int, string>(0, "Error has occured");
             }
-
-        }
-        catch (Exception ex)
-        {
-            return new Tuple<int, string>(0, "Error has occured");
-        }
+        
 
     }
-
+    
     public Tuple<int, List<string>> SavePostImages(IFormFileCollection postImages,String postId)
     {
         var contentPath = this._environment.ContentRootPath;
@@ -102,6 +106,8 @@ public class FileService:IFileService
         List<string> listOfImages = new List<string>();
         foreach (var postImage in postImages)
         {
+            if (postImage.Length > 0)
+            {
             try
             {
                 var ext = Path.GetExtension(postImage.FileName);
@@ -125,13 +131,14 @@ public class FileService:IFileService
                     var stream = new FileStream(fileWithPath, FileMode.Create);
                     postImage.CopyTo(stream);
                     stream.Close();
-                    listOfImages.Add(BaseUrl + "postsImages/" + postId+"/" + newFileName);
+                    listOfImages.Add(BaseUrl + "postsImages/" + postId + "/" + newFileName);
                     // return new Tuple<int, string>(1, newFileName);
                 }
             }
             catch (Exception ex)
             {
                 return new Tuple<int, List<string>>(0, ["Error has occured"]);
+            }
             }
         }
 
@@ -189,7 +196,7 @@ public class FileService:IFileService
         try
         {
             var wwwPath = this._environment.WebRootPath;
-            var path = Path.Combine( "Avatars\\", imageFileName);
+            var path = Path.Combine("files", "Avatars\\", imageFileName);
             if (System.IO.File.Exists(path))
             {
                 System.IO.File.Delete(path);
@@ -200,15 +207,63 @@ public class FileService:IFileService
         catch (Exception ex)
         {
             return false;
-        }    }
-
-    public bool DeletePostImage(string imageFileName)
-    {
-        throw new NotImplementedException();
+        }
+        
     }
 
-    public bool DeletePostVideo(string videoFileName)
+    public bool DeletePostImage(string postId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var contentPath = this._environment.ContentRootPath;
+            var path = Path.Combine("files", "postsImages",postId);
+            if (System.IO.Directory.Exists(path))
+            {
+                System.IO.Directory.Delete(path, true);
+                return true;
+            }
+            return false;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+    public bool DeleteProductImage(string productId)
+    {
+        try
+        {
+            var contentPath = this._environment.ContentRootPath;
+            var path = Path.Combine("files", "productImages",productId);
+            if (System.IO.Directory.Exists(path))
+            {
+                System.IO.Directory.Delete(path, true);
+                return true;
+            }
+            return false;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    public bool DeletePostVideo(string postId)
+    {
+        try
+        {
+            var wwwPath = this._environment.WebRootPath;
+            var path = Path.Combine("files", "postsVideos",postId);
+            if (System.IO.Directory.Exists(path))
+            {
+                System.IO.Directory.Delete(path, true);
+                return true;            
+            }
+            return false;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
     }
 }

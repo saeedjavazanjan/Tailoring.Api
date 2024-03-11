@@ -40,8 +40,12 @@ public interface IRepository
     
     //prodocts
     Task CreateProductAsync(Product product);
-    Task<Product?> GetProductAsync(int id);
+    Task<Product?> GetProductOfPostAsync(int id);
+    
+    Task<Product?>GetProductAsync(int id);
+
     Task UpdateProductAsync(Product updatedProduct);
+    Task DeleteProductAsync(int id);
 
 
 }
