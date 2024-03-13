@@ -12,12 +12,12 @@ public class FileService:IFileService
     private const string BaseUrl = "http://10.0.2.2:5198/files/";
 
 
-    public Tuple<int, string> SaveAvatar(IFormFile avatarFile)
+    public Tuple<int, string> SaveAvatar(IFormFile avatarFile, String userId)
     {
         try
         {
             var contentPath = this._environment.ContentRootPath;
-            var path = Path.Combine(contentPath,"files", "Avatars"); 
+            var path = Path.Combine(contentPath,"files", "Avatars",userId); 
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
@@ -37,7 +37,7 @@ public class FileService:IFileService
             var stream = new FileStream(fileWithPath, FileMode.Create);
             avatarFile.CopyTo(stream);
             stream.Close();
-            return new Tuple<int, string>(1,BaseUrl+ "Avatars/"+newFileName);
+            return new Tuple<int, string>(1,BaseUrl+ "Avatars/"+userId+"/"+newFileName);
         }
         catch (Exception ex)
         {
@@ -191,15 +191,15 @@ public class FileService:IFileService
         
     }
 
-    public bool DeleteAvatar(string imageFileName)
+    public bool DeleteAvatar(string userId)
     {
         try
         {
-            var wwwPath = this._environment.WebRootPath;
-            var path = Path.Combine("files", "Avatars\\", imageFileName);
-            if (System.IO.File.Exists(path))
+            var contentPath = this._environment.ContentRootPath;
+            var path = Path.Combine("files", "Avatars",userId);
+            if (System.IO.Directory.Exists(path))
             {
-                System.IO.File.Delete(path);
+                System.IO.Directory.Delete(path, true);
                 return true;
             }
             return false;

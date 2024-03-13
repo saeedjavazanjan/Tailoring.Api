@@ -174,10 +174,11 @@ public static class UsersEndPoints
             return Results.NoContent();   
         });
 
-        group.MapPut("/updateUser", async (
+        group.MapPut("/updateUser/{aus}", async (
             IRepository iRepository,
             IFileService iFileService,
             ClaimsPrincipal? user,
+            string AUS,
           [FromForm] UserUpdateDto userUpdateDto
             ) => {
             var userId= user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -188,10 +189,11 @@ public static class UsersEndPoints
                     return Results.NotFound(new{error="کاربر یافت نشد."}); 
                 }
 
-                if (userUpdateDto.AvatarFile != null)
+                if (AUS == "yes" && userUpdateDto.AvatarFile!=null)
                 {
-                    iFileService.DeleteAvatar(currentUser.Avatar);
-                    var fileResult = iFileService.SaveAvatar(userUpdateDto.AvatarFile);
+                    
+                    iFileService.DeleteAvatar(userId);
+                    var fileResult = iFileService.SaveAvatar(userUpdateDto.AvatarFile ,userId);
                     if (fileResult.Item1 == 1)
                     {
                         currentUser.Avatar = fileResult.Item2; 
